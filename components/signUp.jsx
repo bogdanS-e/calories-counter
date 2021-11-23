@@ -15,10 +15,12 @@ const SingUp = ({ navigation }) => {
         <Input
           style={styles.input}
           placeholder="Password"
+          secureTextEntry={true}
         />
         <Input
           style={styles.input}
           placeholder="Check password"
+          secureTextEntry={true}
         />
       </View>
       <Button buttonStyle={styles.button} title="Sing in" onPress={() => navigation.navigate("signUp")} />

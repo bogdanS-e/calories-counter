@@ -23,6 +23,7 @@ const SingIn = ({ navigation }) => {
         <Input
           style={styles.input}
           placeholder="Password"
+          secureTextEntry={true}
           leftIcon={
             <Icon
               name='key'
