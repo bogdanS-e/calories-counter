@@ -32,17 +32,23 @@ const SingIn = ({ navigation }) => {
           }
         />
       </View>
-      <Button title="SingIn" onPress={() => navigation.navigate("signUp")} />
+      <Button buttonStyle={styles.button} title="Sing in" onPress={() => navigation.navigate("signUp")} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  button: {
+    width: 200,
+    fontSize: 20,
+    marginTop: 20,
+  },
   inputContainer: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     width: 300,
+    borderRadius: 16,
   },
   text: {
     textAlign: 'center',
