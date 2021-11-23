@@ -8,34 +8,42 @@ const SingIn = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Sign In</Text>
-      <Input
-        style={styles.input}
-        placeholder='User name'
-        leftIcon={
-          <Icon
-            name='user'
-            size={24}
-            color='black'
-          />
-        }
-      />
-      <Input
-        style={styles.input}
-        placeholder="Password"
-        leftIcon={
-          <Icon
-            name='key'
-            size={24}
-            color='black'
-          />
-        }
-      />
+      <View style={styles.inputContainer}>
+        <Input
+          style={styles.input}
+          placeholder='User name'
+          leftIcon={
+            <Icon
+              name='user'
+              size={24}
+              color='black'
+            />
+          }
+        />
+        <Input
+          style={styles.input}
+          placeholder="Password"
+          leftIcon={
+            <Icon
+              name='key'
+              size={24}
+              color='black'
+            />
+          }
+        />
+      </View>
       <Button title="SingIn" onPress={() => navigation.navigate("signUp")} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  inputContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 300,
+  },
   text: {
     textAlign: 'center',
     fontSize: 48,
