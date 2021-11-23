@@ -1,10 +1,13 @@
-import React from 'react';
-import { Button } from 'react-native-elements';
+import React from "react";
+import { Button } from "react-native-elements";
 
-const Main = () => {
+const Main = ({ navigation }) => {
   return (
-    <Button title="Main" />
+    <Button
+      title="Main"
+      onPress={() => navigation.navigate("signIn")}
+    />
   );
-}
+};
 
 export default Main;
