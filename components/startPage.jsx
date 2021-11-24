@@ -19,7 +19,7 @@ const FirstPage = ({ navigation }) => {
         <View style={styles.top}>
           <Text style={styles.text1}>Challange accepted</Text>
           <Text style={styles.text2}>
-            Chalдange yourself and bring healthy back into your life
+            Chalange yourself and bring healthy back into your life
           </Text>
         </View>
         <Image style={styles.image} source={require("../assets/avocado.png")} />
