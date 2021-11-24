@@ -6,9 +6,12 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import FlashMessage from "react-native-flash-message";
 import FirstPage from "./components/startPage";
 import PostRegistration from "./components/PostRegistration";
-import Main from "./components/main";
-import SignIn from "./components/SignIn";
-import SignUp from "./components/SignUp";
+import Profile from "./components/Profile";
+import Statistic from "./components/Statistic";
+import Nutrition from "./components/Nutrition";
+import Hydration from "./components/Hydration";
+import SignIn from "./components/signIn";
+import SignUp from "./components/signUp";
 
 const Stack = createNativeStackNavigator();
 
@@ -21,7 +24,10 @@ export default function App({ navigation }) {
           <Stack.Screen name="signIn" component={SignIn} />
           <Stack.Screen name="signUp" component={SignUp} />
           <Stack.Screen name="postRegistration" component={PostRegistration} />
-          <Stack.Screen name="main" component={Main} />
+          <Stack.Screen name="statistic" component={Statistic} />
+          <Stack.Screen name="nutrition" component={Nutrition} />
+          <Stack.Screen name="hydration" component={Hydration} />
+          <Stack.Screen name="profile" component={Profile} />
         </Stack.Navigator>
       </NavigationContainer>
       <FlashMessage position="top" /> 

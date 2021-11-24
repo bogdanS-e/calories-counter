@@ -20,24 +20,24 @@ const NewSignUp = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.text1}>Join the challange</Text>
-      <Text style={styles.textTitles}>
+      <View style={styles.titles}>
         <Icon name="user" size={14} color="black" />
-        Name
-      </Text>
+        <Text style={styles.textTitles}>Name</Text>
+      </View>
       <TextInput style={styles.input} onChangeText={setLogin} value={login} />
-      <Text style={styles.textTitles}>
-        <Icon name="user" size={14} color="black" />
-        Password
-      </Text>
+      <View style={styles.titles}>
+        <Icon name="lock" size={14} color="black" />
+        <Text style={styles.textTitles}>Password</Text>
+      </View>
       <TextInput
         style={styles.input}
         onChangeText={setPassword}
         value={password}
       />
-      <Text style={styles.textTitles}>
-        <Icon name="user" size={14} color="black" />
-        Repeat password
-      </Text>
+      <View style={styles.titles}>
+        <Icon name="lock" size={14} color="black" />
+        <Text style={styles.textTitles}>Repeat password</Text>
+      </View>
       <TextInput
         style={styles.input}
         onChangeText={setPasswordRepeat}
@@ -48,7 +48,7 @@ const NewSignUp = ({ navigation }) => {
       </Text>
       <Pressable
         style={styles.button}
-        onPress={() => navigation.navigate("main")}
+        onPress={() => navigation.navigate("postRegistration")}
       >
         <Text style={styles.textButton}>Create Account</Text>
       </Pressable>
@@ -71,13 +71,20 @@ const styles = StyleSheet.create({
     marginTop: 80,
     marginBottom: 50,
   },
+  titles: {
+    flex: 1,
+    flexDirection: "row",
+    maxHeight: 25,
+    alignItems: "center",
+    marginLeft: 35,
+    marginTop: 30,
+    marginBottom: 0,
+  },
   textTitles: {
     fontWeight: "bold",
     color: "#393939",
     fontSize: 14,
-    marginLeft: 30,
-    marginTop: 30,
-    marginBottom: 10,
+    marginLeft: 10,
   },
   input: {
     borderRadius: 10,

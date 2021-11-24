@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Pressable,
-  TextInput,
-} from "react-native";
+import { StyleSheet, Text, View, Pressable, TextInput } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Dimensions } from "react-native";
 
@@ -19,15 +13,15 @@ const NewSignIn = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.text1}>Continue your challenge</Text>
-      <Text style={styles.textTitles}>
+      <View style={styles.titles}>
         <Icon name="user" size={14} color="black" />
-        Name
-      </Text>
+        <Text style={styles.textTitles}>Name</Text>
+      </View>
       <TextInput style={styles.input} onChangeText={setLogin} value={login} />
-      <Text style={styles.textTitles}>
-        <Icon name="user" size={14} color="black" />
-        Password
-      </Text>
+      <View style={styles.titles}>
+        <Icon name="lock" size={14} color="black" />
+        <Text style={styles.textTitles}>Password</Text>
+      </View>
       <TextInput
         style={styles.input}
         onChangeText={setPassword}
@@ -38,7 +32,7 @@ const NewSignIn = ({ navigation }) => {
       </Text>
       <Pressable
         style={styles.button}
-        onPress={() => navigation.navigate("main")}
+        onPress={() => navigation.navigate("statistic", {page: "statistic"})}
       >
         <Text style={styles.textButton}>Sign in</Text>
       </Pressable>
@@ -66,13 +60,20 @@ const styles = StyleSheet.create({
     marginTop: 100,
     marginBottom: 100,
   },
+  titles: {
+    flex: 1,
+    flexDirection: "row",
+    maxHeight: 25,
+    alignItems: "center",
+    marginLeft: 30,
+    marginTop: 35,
+    marginBottom: 0,
+  },
   textTitles: {
     fontWeight: "bold",
     color: "#393939",
     fontSize: 14,
-    marginLeft: 30,
-    marginTop: 30,
-    marginBottom: 10,
+    marginLeft: 10,
   },
   input: {
     borderRadius: 10,
