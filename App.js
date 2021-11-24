@@ -3,7 +3,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
+import FlashMessage from "react-native-flash-message";
 import FirstPage from "./components/startPage";
+import PostRegistration from "./components/PostRegistration";
 import Main from "./components/main";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
@@ -18,9 +20,11 @@ export default function App({ navigation }) {
           <Stack.Screen name="firstPage" component={FirstPage} />
           <Stack.Screen name="signIn" component={SignIn} />
           <Stack.Screen name="signUp" component={SignUp} />
+          <Stack.Screen name="postRegistration" component={PostRegistration} />
           <Stack.Screen name="main" component={Main} />
         </Stack.Navigator>
       </NavigationContainer>
+      <FlashMessage position="top" /> 
     </SafeAreaProvider>
   );
 }
