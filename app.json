@@ -1,5 +1,6 @@
 {
   "expo": {
+    "userInterfaceStyle": "automatic",
     "name": "b",
     "slug": "b",
     "version": "1.0.0",
