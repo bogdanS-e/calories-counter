@@ -3,7 +3,7 @@ import { StyleSheet, Pressable, View, Text } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Dimensions } from "react-native";
 
-let ScreenWidth = Dimensions.get("window").width;
+const ScreenWidth = Dimensions.get("window").width;
 
 const pages = ["statistic", "nutrition", "hydration", "profile"];
 
