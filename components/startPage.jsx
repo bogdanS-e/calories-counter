@@ -4,9 +4,8 @@ import { StyleSheet, Text, View, Image, Button, Pressable } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Dimensions } from "react-native";
 
-let ScreenHeight = Dimensions.get("window").height;
-let ScreenWidth = Dimensions.get("window").width;
-console.log(ScreenHeight);
+const ScreenHeight = Dimensions.get("window").height;
+const ScreenWidth = Dimensions.get("window").width;
 
 const FirstPage = ({ navigation }) => {
   return (
