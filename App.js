@@ -14,6 +14,7 @@ import Nutrition from "./components/Nutrition";
 import Hydration from "./components/Hydration";
 import SignIn from "./components/signIn";
 import SignUp from "./components/signUp";
+import Food from "./components/Food";
 
 const Stack = createNativeStackNavigator();
 
@@ -31,6 +32,7 @@ export default function App() {
           <Stack.Screen name="nutrition" component={Nutrition} />
           <Stack.Screen name="hydration" component={Hydration} />
           <Stack.Screen name="profile" component={Profile} />
+          <Stack.Screen name="food" component={Food} />
         </Stack.Navigator>
       </NavigationContainer>
       <FlashMessage position="top" /> 
