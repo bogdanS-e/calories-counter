@@ -14,26 +14,30 @@ const FirstPage = ({ navigation }) => {
         colors={["#81B23B", "#709E60"]}
         style={styles.linearGradient}
       >
-        <View style={styles.topMargin}></View>
-        <View style={styles.top}>
-          <Text style={styles.text1}>Challange accepted</Text>
-          <Text style={styles.text2}>
-            Chalange yourself and bring healthy back into your life
-          </Text>
+        <View>
+          <View style={styles.topMargin}></View>
+          <View style={styles.top}>
+            <Text style={styles.text1}>Challange accepted</Text>
+            <Text style={styles.text2}>
+              Chalange yourself and bring healthy back into your life
+            </Text>
+          </View>
         </View>
         <Image style={styles.image} source={require("../assets/avocado.png")} />
-        <Pressable
-          style={styles.button}
-          onPress={() => navigation.navigate("signIn")}
-        >
-          <Text style={styles.textButton}>Get In</Text>
-        </Pressable>
-        <Pressable
-          style={styles.buttonNew}
-          onPress={() => navigation.navigate("signUp")}
-        >
-          <Text style={styles.textButtonNew}>Create an Account</Text>
-        </Pressable>
+        <View>
+          <Pressable
+            style={styles.button}
+            onPress={() => navigation.navigate("signIn")}
+          >
+            <Text style={styles.textButton}>Get In</Text>
+          </Pressable>
+          <Pressable
+            style={styles.buttonNew}
+            onPress={() => navigation.navigate("signUp")}
+          >
+            <Text style={styles.textButtonNew}>Create an Account</Text>
+          </Pressable>
+        </View>
       </LinearGradient>
     </View>
   );
@@ -42,12 +46,14 @@ const FirstPage = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     display: "flex",
+    justifyContent: "space-between",
+    alignItems: "stretch",
     flex: 1,
     position: "relative",
   },
-  background: {
-    height: ScreenHeight,
-    position: "absolute",
+  linearGradient: {
+    minHeight: ScreenHeight,
+    justifyContent: "space-between",
   },
   topMargin: {
     backgroundColor: "#97C059",
@@ -78,8 +84,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginLeft: (ScreenWidth - ScreenWidth / 1.5) / 2,
-    marginTop: 60,
-    marginBottom: 60,
     width: ScreenWidth / 1.5,
     height: ScreenWidth / 1.5,
   },

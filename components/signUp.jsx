@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Pressable,
-  TextInput,
-} from "react-native";
+import { StyleSheet, Text, View, Pressable, TextInput } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Dimensions } from "react-native";
 
@@ -20,38 +14,42 @@ const NewSignUp = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.text1}>Join the challange</Text>
-      <View style={styles.titles}>
-        <Icon name="user" size={14} color="black" />
-        <Text style={styles.textTitles}>Name</Text>
+      <View>
+        <View style={styles.titles}>
+          <Icon name="user" size={14} color="black" />
+          <Text style={styles.textTitles}>Name</Text>
+        </View>
+        <TextInput style={styles.input} onChangeText={setLogin} value={login} />
+        <View style={styles.titles}>
+          <Icon name="lock" size={14} color="black" />
+          <Text style={styles.textTitles}>Password</Text>
+        </View>
+        <TextInput
+          style={styles.input}
+          onChangeText={setPassword}
+          value={password}
+        />
+        <View style={styles.titles}>
+          <Icon name="lock" size={14} color="black" />
+          <Text style={styles.textTitles}>Repeat password</Text>
+        </View>
+        <TextInput
+          style={styles.input}
+          onChangeText={setPasswordRepeat}
+          value={passwordRepeat}
+        />
       </View>
-      <TextInput style={styles.input} onChangeText={setLogin} value={login} />
-      <View style={styles.titles}>
-        <Icon name="lock" size={14} color="black" />
-        <Text style={styles.textTitles}>Password</Text>
+      <View>
+        <Text style={styles.helper}>
+          By signing up you agree with ours terms and conditions
+        </Text>
+        <Pressable
+          style={styles.button}
+          onPress={() => navigation.navigate("postRegistration")}
+        >
+          <Text style={styles.textButton}>Create Account</Text>
+        </Pressable>
       </View>
-      <TextInput
-        style={styles.input}
-        onChangeText={setPassword}
-        value={password}
-      />
-      <View style={styles.titles}>
-        <Icon name="lock" size={14} color="black" />
-        <Text style={styles.textTitles}>Repeat password</Text>
-      </View>
-      <TextInput
-        style={styles.input}
-        onChangeText={setPasswordRepeat}
-        value={passwordRepeat}
-      />
-      <Text style={styles.helper}>
-        By signing up you agree with ours terms and conditions
-      </Text>
-      <Pressable
-        style={styles.button}
-        onPress={() => navigation.navigate("postRegistration")}
-      >
-        <Text style={styles.textButton}>Create Account</Text>
-      </Pressable>
     </View>
   );
 };
@@ -62,6 +60,7 @@ const styles = StyleSheet.create({
     flex: 1,
     position: "relative",
     backgroundColor: "#F4F4F4",
+    justifyContent: "space-between",
   },
   text1: {
     fontWeight: "bold",
@@ -69,16 +68,14 @@ const styles = StyleSheet.create({
     fontSize: 22,
     marginLeft: 30,
     marginTop: 80,
-    marginBottom: 50,
+    marginBottom: 35,
   },
   titles: {
-    flex: 1,
     flexDirection: "row",
-    maxHeight: 25,
+    height: 20,
     alignItems: "center",
     marginLeft: 35,
-    marginTop: 30,
-    marginBottom: 0,
+    marginVertical: 10,
   },
   textTitles: {
     fontWeight: "bold",
@@ -113,6 +110,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     borderRadius: 4,
     elevation: 3,
+    marginBottom: 50,
     backgroundColor: "#B1D430",
   },
   helper: {
@@ -122,7 +120,7 @@ const styles = StyleSheet.create({
     marginLeft: 50,
     marginRight: 50,
     marginTop: 90,
-    marginBottom: 50,
+    marginBottom: 20,
   },
 });
 

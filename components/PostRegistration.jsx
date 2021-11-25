@@ -1,21 +1,20 @@
 import React, { useState, useEffect, useRef } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import moment from "moment";
-import { showMessage } from "react-native-flash-message";
 
 import {
   StyleSheet,
   Text,
   TextInput,
   View,
+  Vibration,
   Pressable,
-  KeyboardAvoidingView,
   BackHandler,
 } from "react-native";
 import { Dimensions } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
-import {useContext} from '../context/globalContext';
+import { useContext } from "../context/globalContext";
 
 const ScreenWidth = Dimensions.get("window").width;
 
@@ -25,9 +24,9 @@ const PostRegistration = ({ navigation }) => {
   const step1 = useRef(null);
   const step2 = useRef(null);
 
-  const [weight, setWeight] = useState('');
-  const [height, setHeight] = useState('');
-  const [date, setDate] = useState('');
+  const [weight, setWeight] = useState("");
+  const [height, setHeight] = useState("");
+  const [date, setDate] = useState("");
   const [step, setStep] = useState(0);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
@@ -59,14 +58,16 @@ const PostRegistration = ({ navigation }) => {
   const incrementStep = () => {
     if (step === 2) {
       if (!date) {
-        return showMessage({
+        Vibration.vibrate(400, false);
+
+        return /*showMessage({
           message: "Validation error",
           description: "Enter a valid weight",
           type: "danger",
           style: {
             paddingTop: 30,
           }
-        });
+        })*/;
       }
 
       //request to back end here
@@ -74,9 +75,9 @@ const PostRegistration = ({ navigation }) => {
         height,
         weight,
         birthDate: date,
-      }) //fill context after responce and go ahead;
+      }); //fill context after responce and go ahead;
       return navigation.navigate("statistic", { page: "statistic" });
-    };
+    }
 
     setStep((prev) => {
       if (prev === 0) {
@@ -84,14 +85,15 @@ const PostRegistration = ({ navigation }) => {
 
         if (!validWeight || validWeight < 10 || validWeight > 300) {
           step1.current.focus();
-          showMessage({
+          /*showMessage({
             message: "Validation error",
             description: "Enter a valid weight",
             type: "danger",
             style: {
               paddingTop: 30,
             }
-          });
+          });*/
+          Vibration.vibrate(400, false);
           return prev;
         }
       } else if (prev === 1) {
@@ -99,14 +101,15 @@ const PostRegistration = ({ navigation }) => {
 
         if (!validHeight || validHeight < 50 || validHeight > 300) {
           step2.current.focus();
-          showMessage({
+          /*showMessage({
             message: "Validation error",
             description: "Enter a valid height",
             type: "danger",
             style: {
               paddingTop: 30,
             }
-          });
+          });*/
+          Vibration.vibrate(400, false);
           return prev;
         }
       }
@@ -123,14 +126,10 @@ const PostRegistration = ({ navigation }) => {
   }, []);
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior='height'
-      enabled={false}
-    >
-      <View style={styles.container}>
-        {step === 0 && (<>
-          <Text style={styles.step}>Step 1</Text>
+    <View style={styles.container}>
+      <Text style={styles.step}>Step {step + 1}</Text>
+      {step === 0 && (
+        <View>
           <Text style={styles.text1}>Your current weight</Text>
           <LinearGradient
             colors={["#9acf02", "#6e9762"]}
@@ -142,8 +141,8 @@ const PostRegistration = ({ navigation }) => {
             <View style={styles.inputContainer}>
               <TextInput
                 style={styles.numberInput}
-                keyboardType='numeric'
-                placeholder='68'
+                keyboardType="numeric"
+                placeholder="68"
                 ref={step1}
                 onChangeText={(weight) => setWeight(weight)}
                 value={weight}
@@ -153,16 +152,17 @@ const PostRegistration = ({ navigation }) => {
                 style={styles.disableInput}
                 placeholder="Kg"
                 value="Kg"
-                underlineColorAndroid='transparent'
+                underlineColorAndroid="transparent"
                 editable={false}
                 selectTextOnFocus={false}
               />
             </View>
           </LinearGradient>
-        </>)}
+        </View>
+      )}
 
-        {step === 1 && (<>
-          <Text style={styles.step}>Step 2</Text>
+      {step === 1 && (
+        <View>
           <Text style={styles.text1}>Your current height</Text>
           <LinearGradient
             colors={["#9acf02", "#6e9762"]}
@@ -174,8 +174,8 @@ const PostRegistration = ({ navigation }) => {
             <View style={styles.inputContainer}>
               <TextInput
                 style={styles.numberInput}
-                keyboardType='numeric'
-                placeholder='160'
+                keyboardType="numeric"
+                placeholder="160"
                 ref={step2}
                 onChangeText={(height) => setHeight(height)}
                 value={height}
@@ -185,16 +185,17 @@ const PostRegistration = ({ navigation }) => {
                 style={styles.disableInput}
                 placeholder="Cm"
                 value="Cm"
-                underlineColorAndroid='transparent'
+                underlineColorAndroid="transparent"
                 editable={false}
                 selectTextOnFocus={false}
               />
             </View>
           </LinearGradient>
-        </>)}
+        </View>
+      )}
 
-        {step === 2 && (<>
-          <Text style={styles.step}>Step 3</Text>
+      {step === 2 && (
+        <View>
           <Text style={styles.text1}>How old are you?</Text>
           <LinearGradient
             colors={["#9acf02", "#6e9762"]}
@@ -206,8 +207,8 @@ const PostRegistration = ({ navigation }) => {
             <Pressable onPress={showDatePicker}>
               <TextInput
                 style={styles.disableDate}
-                value={date && moment(date).format('YYYY-MM-DD')}
-                placeholder='Press here'
+                value={date && moment(date).format("YYYY-MM-DD")}
+                placeholder="Press here"
                 editable={false}
                 selectTextOnFocus={false}
               />
@@ -219,36 +220,36 @@ const PostRegistration = ({ navigation }) => {
               onCancel={hideDatePicker}
             />
           </LinearGradient>
-        </>)}
-
-        <View style={styles.controllerContainer}>
-          <Text style={styles.text3}>All your information is confidencial and will be only visible to you</Text>
-          <Pressable style={styles.button} onPress={incrementStep}>
-            <Text style={styles.textButton} >Proceed</Text>
-          </Pressable>
         </View>
+      )}
+
+      <View style={styles.controllerContainer}>
+        <Text style={styles.text3}>
+          All your information is confidencial and will be only visible for you
+        </Text>
+        <Pressable style={styles.button} onPress={incrementStep}>
+          <Text style={styles.textButton}>Proceed</Text>
+        </Pressable>
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     display: "flex",
-    flexDirection: 'column',
-    alignItems: 'center',
+    justifyContent: "space-between",
+    alignItems: "center",
     flex: 1,
     position: "relative",
     backgroundColor: "#F4F4F4",
   },
   controllerContainer: {
-    position: 'absolute',
-    bottom: 12,
-    marginTop: -10,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
+    marginBottom: 20,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
   },
   textButton: {
     fontSize: 16,
@@ -270,82 +271,81 @@ const styles = StyleSheet.create({
     backgroundColor: "#B1D430",
   },
   inputContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   step: {
     fontWeight: "bold",
     color: "#393939",
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 32,
-    marginTop: 100,
-    marginBottom: 20,
+    marginTop: 40,
   },
   text1: {
     fontWeight: "bold",
     color: "#393939",
-    textAlign: 'center',
-    fontSize: 32,
-    marginTop: 70,
-    marginBottom: 60,
+    textAlign: "center",
+    fontSize: 24,
+    marginBottom: 30,
   },
   text2: {
     fontWeight: "bold",
     color: "#393939",
-    fontSize: 22,
-    marginBottom: 30,
+    fontSize: 18,
+    marginBottom: 10,
   },
   text3: {
     color: "#9b9b9b",
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 20,
     marginBottom: 20,
     padding: 10,
   },
   linearGradient: {
     width: 300,
-    height: 200,
+    height: 100,
     borderRadius: 12,
-    overflow: 'hidden',
-    padding: 30,
+    overflow: "hidden",
+    paddingVertical: 10,
+    paddingHorizontal: 25,
   },
   numberInput: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     width: 170,
-    height: 50,
+    height: 40,
     borderRadius: 14,
     paddingHorizontal: 10,
     fontSize: 20,
   },
   numberInputAge: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     width: 240,
-    height: 50,
+    height: 40,
     borderRadius: 14,
     paddingHorizontal: 10,
     fontSize: 20,
   },
   disableInput: {
-    backgroundColor: '#fff',
-    textAlign: 'center',
+    backgroundColor: "#fff",
+    textAlign: "center",
     width: 50,
-    height: 50,
+    height: 40,
     borderRadius: 14,
     paddingHorizontal: 10,
     fontSize: 20,
   },
   disableDate: {
-    backgroundColor: '#fff',
-    color: '#000',
-    textAlign: 'center',
+    backgroundColor: "#fff",
+    color: "#000",
+    textAlign: "center",
     width: 240,
-    height: 50,
+    height: 40,
     borderRadius: 14,
     paddingHorizontal: 10,
     fontSize: 20,
-  }
+  },
 });
 
 export default PostRegistration;
