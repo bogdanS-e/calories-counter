@@ -1,14 +1,67 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, Pressable, TextInput } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Dimensions } from "react-native";
+import { showMessage } from "react-native-flash-message";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-let ScreenHeight = Dimensions.get("window").height;
+import { useContext } from "../context/globalContext";
+
 let ScreenWidth = Dimensions.get("window").width;
 
 const NewSignIn = ({ navigation }) => {
+  const { baseUrl, checkUser } = useContext();
+
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
+  const [isFetching, setIsFetching] = useState(false);
+
+  const handleSignIn = async () => {
+    try {
+      setIsFetching(true);
+
+      const resp = await fetch(`${baseUrl}/token/`, {
+        method: 'post',
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          username: login,
+          password,
+        }),
+      });
+
+      const json = await resp.json();
+
+      console.log(resp.status);
+      console.log(json);
+      if (resp.status !== 201 && resp.status !== 200) {
+        return showMessage({
+          message: json.detail,
+          type: "danger",
+          style: {
+            paddingTop: 30,
+          }
+        });
+      }
+
+      await AsyncStorage.setItem('access_token', json.access);
+      checkUser(navigation);
+
+    } catch (_) {
+      console.log(_);
+      showMessage({
+        message: "Something went wrong",
+        type: "danger",
+        style: {
+          paddingTop: 30,
+        }
+      });
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.text1}>Continue your challenge</Text>
@@ -33,12 +86,11 @@ const NewSignIn = ({ navigation }) => {
           Thank you for using our app! Don't stop and continue reach new goals
         </Text>
         <Pressable
-          style={styles.button}
-          onPress={() =>
-            navigation.navigate("statistic", { page: "statistic" })
-          }
+          style={isFetching ? styles.buttonDisabled : styles.button}
+          onPress={handleSignIn}
+          disabled={isFetching}
         >
-          <Text style={styles.textButton}>Sign in</Text>
+          <Text style={styles.textButton}>{isFetching ? "Loading..." : "Sign in"}</Text>
         </Pressable>
       </View>
     </View>
@@ -100,6 +152,20 @@ const styles = StyleSheet.create({
     width: ScreenWidth / 1.5,
     height: 45,
     alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: "#B1D430",
+    marginBottom: 50,
+  },
+  buttonDisabled: {
+    marginLeft: (ScreenWidth - ScreenWidth / 1.5) / 2,
+    width: ScreenWidth / 1.5,
+    height: 45,
+    alignItems: "center",
+    opacity: 0.5,
     justifyContent: "center",
     paddingVertical: 12,
     paddingHorizontal: 32,

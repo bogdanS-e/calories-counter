@@ -1,13 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import { StyleSheet, Text, View, Image, Button, Pressable } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
+import { StyleSheet, Text, View, Image, Pressable } from "react-native";
 import { Dimensions } from "react-native";
+
+import { useContext } from "../context/globalContext";
 
 const ScreenHeight = Dimensions.get("window").height;
 const ScreenWidth = Dimensions.get("window").width;
 
 const FirstPage = ({ navigation }) => {
+  const { checkUser } = useContext();
+
+  useEffect(() => {
+    checkUser(navigation);
+  }, []);
+
   return (
     <View style={styles.container}>
       <LinearGradient

@@ -4,6 +4,8 @@ import { Slider } from "@miblanchard/react-native-slider";
 import { LinearGradient } from "expo-linear-gradient";
 import NavBar from "./NavBar";
 
+import { useContext } from "../context/globalContext";
+
 const formatAMPM = (date) => {
   let hours = date.getHours();
   let minutes = date.getMinutes();
@@ -29,6 +31,8 @@ const getProgress = () => {
 };
 
 const Nutrition = ({ navigation, route }) => {
+  const { user } = useContext();
+
   return (
     <View style={styles.container}>
       <View>
@@ -36,7 +40,7 @@ const Nutrition = ({ navigation, route }) => {
         <View style={styles.mainInfo}>
           <View>
             <View style={styles.horizontal}>
-              <Text style={styles.text2}>Hey Bodya!</Text>
+              <Text style={styles.text2}>Hey, {user.name}!</Text>
               <Text style={styles.text1}>Let's check your calories today!</Text>
             </View>
             <View style={styles.horizontal}>

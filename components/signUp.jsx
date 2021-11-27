@@ -2,15 +2,84 @@ import React, { useState } from "react";
 import { StyleSheet, Text, View, Pressable, TextInput } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Dimensions } from "react-native";
+import { showMessage } from "react-native-flash-message";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-let ScreenHeight = Dimensions.get("window").height;
+import { useContext } from "../context/globalContext";
+
 let ScreenWidth = Dimensions.get("window").width;
-console.log(ScreenHeight);
 
 const NewSignUp = ({ navigation }) => {
+  const { baseUrl, checkUser } = useContext();
+
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [passwordRepeat, setPasswordRepeat] = useState("");
+  const [isFetching, setIsFetching] = useState(false);
+
+  const handleSignUp = async () => {
+    if (login && password && passwordRepeat) {
+      if (passwordRepeat === password) {
+        try {
+          setIsFetching(true);
+
+          const resp = await fetch(`${baseUrl}/register/`, {
+            method: 'post',
+            headers: {
+              "content-type": "application/json",
+            },
+            body: JSON.stringify({
+              username: login,
+              password,
+            }),
+          });
+
+          const json = await resp.json();
+
+          if (resp.status !== 201) {
+            return showMessage({
+              message: json.username[0],
+              type: "danger",
+              style: {
+                paddingTop: 30,
+              }
+            });
+          }
+
+          await AsyncStorage.setItem('access_token', json.access_token);
+
+          showMessage({
+            message: "User hass been created",
+            type: "success",
+            style: {
+              paddingTop: 30,
+            }
+          });
+
+          checkUser(navigation);
+        } catch (_) {
+          showMessage({
+            message: "Something went wrong",
+            type: "danger",
+            style: {
+              paddingTop: 30,
+            }
+          });
+        } finally {
+          setIsFetching(false);
+        }
+      } else {
+        showMessage({
+          message: "Password confirmation error",
+          type: "danger",
+          style: {
+            paddingTop: 30,
+          }
+        });
+      }
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.text1}>Join the challange</Text>
@@ -25,6 +94,7 @@ const NewSignUp = ({ navigation }) => {
           <Text style={styles.textTitles}>Password</Text>
         </View>
         <TextInput
+          secureTextEntry={true}
           style={styles.input}
           onChangeText={setPassword}
           value={password}
@@ -34,6 +104,7 @@ const NewSignUp = ({ navigation }) => {
           <Text style={styles.textTitles}>Repeat password</Text>
         </View>
         <TextInput
+          secureTextEntry={true}
           style={styles.input}
           onChangeText={setPasswordRepeat}
           value={passwordRepeat}
@@ -44,10 +115,11 @@ const NewSignUp = ({ navigation }) => {
           By signing up you agree with ours terms and conditions
         </Text>
         <Pressable
-          style={styles.button}
-          onPress={() => navigation.navigate("postRegistration")}
+          style={isFetching ? styles.buttonDisabled : styles.button}
+          onPress={handleSignUp}
+          disabled={isFetching}
         >
-          <Text style={styles.textButton}>Create Account</Text>
+          <Text style={styles.textButton}>{isFetching ? 'Loading...' : 'Create Account'}</Text>
         </Pressable>
       </View>
     </View>
@@ -104,6 +176,21 @@ const styles = StyleSheet.create({
     marginLeft: (ScreenWidth - ScreenWidth / 1.5) / 2,
     width: ScreenWidth / 1.5,
     height: 45,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    marginBottom: 50,
+    backgroundColor: "#B1D430",
+  },
+
+  buttonDisabled: {
+    marginLeft: (ScreenWidth - ScreenWidth / 1.5) / 2,
+    width: ScreenWidth / 1.5,
+    height: 45,
+    opacity: 0.5,
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 12,
