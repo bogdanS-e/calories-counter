@@ -22,8 +22,8 @@ const ScreenWidth = Dimensions.get("window").width;
 const Profile = ({ navigation, route }) => {
   const { user } = useContext();
 
-  const [weight, setWeight] = useState(user.weight || "");
-  const [height, setHeight] = useState(user.height || "");
+  const [weight, setWeight] = useState(String(user.weight) || "");
+  const [height, setHeight] = useState(String(user.height) || "");
   const [date, setDate] = useState(user.birthDate || "");
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
