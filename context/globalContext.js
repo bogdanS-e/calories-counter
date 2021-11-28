@@ -13,6 +13,7 @@ export const GlobalContext = React.createContext({
     waterNorm: "",
     proteinNorm: "",
     sex: "",
+    profile: "",
   },
   baseUrl: '',
   setUser: (user) => { },
@@ -23,7 +24,7 @@ export const GlobalContext = React.createContext({
 export const useContext = () => React.useContext(GlobalContext);
 
 export const GlobalContextProvider = ({ children }) => {
-  const baseUrl = 'http://4d13-91-237-27-112.ngrok.io/api';
+  const baseUrl = 'http://e9b1-91-237-27-112.ngrok.io/api';
 
   const [user, setUser] = useState({
     name: "",

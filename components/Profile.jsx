@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {
   StyleSheet,
@@ -18,11 +19,43 @@ import NavBar from "./NavBar";
 const ScreenWidth = Dimensions.get("window").width;
 
 const Profile = ({ navigation, route }) => {
-  const { user } = useContext();
+  const { user, baseUrl, checkUser, editUser } = useContext();
 
   const [weight, setWeight] = useState(String(user.weight) || "");
   const [height, setHeight] = useState(String(user.height) || "");
-  const [password, setPassword] = useState("");
+
+  const sendData = async () => {
+    const token = await AsyncStorage.getItem('access_token');
+
+    console.log('UPDATE DATA');
+    try {
+      const resp = await fetch(`${baseUrl}/profile/`, {
+        method: 'PATCH',
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          weight: +weight,
+          height: +height,
+        }),
+      });
+
+      if (resp.status === 401) {
+        return checkUser(navigation);
+      }
+      const json = await resp.json();
+      console.log(json);
+      editUser({
+        height: json.height,
+        weight: json.weight,
+      });
+    } catch (error) {
+      console.log(error);
+      checkUser(navigation);
+    }
+
+  }
 
   return (
     <KeyboardAvoidingView
@@ -84,35 +117,10 @@ const Profile = ({ navigation, route }) => {
               />
             </View>
           </LinearGradient>
-
-          <LinearGradient
-            colors={["#9acf02", "#6e9762"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.linearGradient}
-          >
-            <Text style={styles.text2}>Enter Password</Text>
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.numberInput}
-                onChangeText={setPassword}
-                value={password}
-                secureTextEntry={true}
-              />
-              <TextInput
-                style={styles.disableInput}
-                placeholder="*"
-                value="*"
-                underlineColorAndroid="transparent"
-                editable={false}
-                selectTextOnFocus={false}
-              />
-            </View>
-          </LinearGradient>
         </View>
 
         <View style={styles.controllerContainer}>
-          <Pressable style={styles.button}>
+          <Pressable style={styles.button} onPress={sendData}>
             <Text style={styles.textButton}>Proceed</Text>
           </Pressable>
         </View>
