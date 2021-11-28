@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import moment from "moment";
 
 import {
   StyleSheet,
@@ -11,7 +10,6 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import { Dimensions } from "react-native";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 import { useContext } from "../context/globalContext";
 
@@ -24,21 +22,7 @@ const Profile = ({ navigation, route }) => {
 
   const [weight, setWeight] = useState(String(user.weight) || "");
   const [height, setHeight] = useState(String(user.height) || "");
-  const [date, setDate] = useState(user.birthDate || "");
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
-
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
-
-  const handleConfirmDate = (date) => {
-    setDate(date);
-    hideDatePicker();
-  };
+  const [password, setPassword] = useState("");
 
   return (
     <KeyboardAvoidingView
@@ -107,22 +91,23 @@ const Profile = ({ navigation, route }) => {
             end={{ x: 1, y: 1 }}
             style={styles.linearGradient}
           >
-            <Text style={styles.text2}>Your birthday date:</Text>
-            <Pressable onPress={showDatePicker}>
+            <Text style={styles.text2}>Enter Password</Text>
+            <View style={styles.inputContainer}>
               <TextInput
-                style={styles.disableDate}
-                value={date && moment(date).format("YYYY-MM-DD")}
-                placeholder="Press here"
+                style={styles.numberInput}
+                onChangeText={setPassword}
+                value={password}
+                secureTextEntry={true}
+              />
+              <TextInput
+                style={styles.disableInput}
+                placeholder="*"
+                value="*"
+                underlineColorAndroid="transparent"
                 editable={false}
                 selectTextOnFocus={false}
               />
-            </Pressable>
-            <DateTimePickerModal
-              isVisible={isDatePickerVisible}
-              mode="date"
-              onConfirm={handleConfirmDate}
-              onCancel={hideDatePicker}
-            />
+            </View>
           </LinearGradient>
         </View>
 
@@ -145,6 +130,13 @@ const styles = StyleSheet.create({
     flex: 1,
     position: "relative",
     backgroundColor: "#F4F4F4",
+  },
+  titles: {
+    flexDirection: "row",
+    maxHeight: 25,
+    alignItems: "center",
+    marginLeft: 30,
+    marginVertical: 10,
   },
   controllerContainer: {
     marginTop: -10,

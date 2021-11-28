@@ -99,6 +99,7 @@ const PostRegistration = ({ navigation }) => {
           waterNorm: json.water_norm,
           proteinNorm: json.protein_norm,
           sex: json.sex,
+          profile: json.id,
         });
 
         navigation.navigate("nutrition", { page: "nutrition" });

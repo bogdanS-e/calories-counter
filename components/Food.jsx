@@ -1,11 +1,14 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { StyleSheet, View, Text, TextInput, ScrollView, Image, Dimensions } from "react-native";
 import NavBar from "./NavBar";
+import { useContext } from "../context/globalContext";
 
 const ScreenWidth = Dimensions.get("window").width;
 
 const Food = ({ navigation, route }) => {
-  const [categories] = useState([
+  const {baseUrl} = useContext();
+   
+  const [categories, setCategories] = useState([
     {
       imageUrl: 'https://www.burpee.com/media/catalog/category/POT-Cat1.jpg',
       name: 'pinaple',
@@ -56,6 +59,21 @@ const Food = ({ navigation, route }) => {
     },
   ]);
 
+  useEffect(() => {
+    const getFood = async () => {
+      const resp = await fetch(`${baseUrl}/food-category/`);
+      const json = await resp.json();
+
+      console.log('FOOD');
+      console.log(json);
+      console.log('update');
+      setCategories(json);
+    }
+
+    getFood();
+  }, []);
+
+  console.log(categories);
   const [searchText, setSearchText] = useState('');
 
   const filtredCategories = useMemo(() => {
@@ -68,7 +86,7 @@ const Food = ({ navigation, route }) => {
     }
 
     return categories.filter((category) => category.name.includes(searchText.trim().toLocaleLowerCase()));
-  }, [searchText]);
+  }, [searchText, categories]);
 
   return (
     <View style={styles.container}>
@@ -79,7 +97,7 @@ const Food = ({ navigation, route }) => {
       <View style={styles.scrollWrapper}>
         <ScrollView contentContainerStyle={styles.scrollView}>
           {filtredCategories.length ? (
-              filtredCategories.map(({ id, name, calories, imageUrl }) => (
+            filtredCategories.map(({ id, name, calories, imageUrl }) => (
               <View style={styles.card} key={id}>
                 <Image style={styles.image} source={{ uri: imageUrl }} />
                 <View style={styles.cardText} key={id}>
@@ -88,10 +106,10 @@ const Food = ({ navigation, route }) => {
                 </View>
               </View>
             ))
-            ) : (<>
-              <Text style={styles.noResult}>There are no categories that contain "{searchText}"</Text>
-              <Image style={styles.image2} source={require("../assets/avocado2.png")} />
-            </>)
+          ) : (<>
+            <Text style={styles.noResult}>There are no categories that contain "{searchText}"</Text>
+            <Image style={styles.image2} source={require("../assets/avocado2.png")} />
+          </>)
           }
         </ScrollView>
       </View>
