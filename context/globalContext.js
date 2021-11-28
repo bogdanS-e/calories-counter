@@ -23,7 +23,7 @@ export const GlobalContext = React.createContext({
 export const useContext = () => React.useContext(GlobalContext);
 
 export const GlobalContextProvider = ({ children }) => {
-  const baseUrl = "http://4d13-91-237-27-112.ngrok.io/api";
+  const baseUrl = "http://e9b1-91-237-27-112.ngrok.io/api";
 
   const [user, setUser] = useState({
     name: "",
@@ -37,6 +37,7 @@ export const GlobalContextProvider = ({ children }) => {
     proteinNorm: "",
     sex: "",
     profile: "",
+    todayWaterEvent: [],
   });
 
   const handleUser = (newUser) => {
@@ -93,7 +94,17 @@ export const GlobalContextProvider = ({ children }) => {
             return navigation.navigate("firstPage");
           }
 
+          const getUserWater = await fetch(`${baseUrl}/water-event/`, {
+            method: "get",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          const jsonUserWater = await getUserWater.json();
+
           console.log(jsonUser);
+          console.log(jsonUserWater);
 
           setUser({
             name: jsonUser.user.username,
@@ -107,6 +118,7 @@ export const GlobalContextProvider = ({ children }) => {
             waterNorm: jsonUser.water_norm,
             sex: jsonUser.sex,
             profile: jsonUser.id,
+            todayWaterEvent: jsonUserWater,
           });
 
           navigation.navigate("nutrition", { page: "nutrition" });

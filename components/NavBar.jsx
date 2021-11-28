@@ -5,30 +5,16 @@ import { Dimensions } from "react-native";
 
 const ScreenWidth = Dimensions.get("window").width;
 
-const pages = ["statistic", "nutrition", "hydration", "profile"];
+const pages = ["nutrition", "hydration", "profile"];
 
 const NavBar = ({ navigation, route }) => {
   const page = route.params.page;
   return (
     <View style={styles.container}>
       <View
-        style={createSign((pages.indexOf(page) * ScreenWidth) / 4, ScreenWidth)}
+        style={createSign((pages.indexOf(page) * ScreenWidth) / 3, ScreenWidth)}
       ></View>
       <View style={styles.bottomNavigation}>
-        <Pressable
-          style={page === "statistic" ? styles.buttonActive : styles.button}
-          onPress={() =>
-            navigation.navigate("statistic", { page: "statistic" })
-          }
-        >
-          <Text style={styles.iconStyle}>
-            <Icon
-              name="home"
-              size={page === "statistic" ? 32 : 24}
-              color="#FFFFF4"
-            />
-          </Text>
-        </Pressable>
         <Pressable
           style={page === "nutrition" ? styles.buttonActive : styles.button}
           onPress={() =>
@@ -79,7 +65,7 @@ let createSign = function(margin, screen) {
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     flex: 1,
-    width: screen / 4,
+    width: screen / 3,
     maxHeight: 9,
     backgroundColor: "#B1D430",
     marginLeft: margin,

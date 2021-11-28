@@ -1,20 +1,19 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Text, Pressable, ScrollView } from "react-native";
 import { Slider } from "@miblanchard/react-native-slider";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import NavBar from "./NavBar";
 import { useContext } from "../context/globalContext";
+import { showMessage } from "react-native-flash-message";
 
-const formatAMPM = (date) => {
+const formatAMPM = (dateString) => {
+  let date = new Date(dateString);
   let hours = date.getHours();
   let minutes = date.getMinutes();
-  let ampm = hours >= 12 ? "PM" : "AM";
-  hours = hours % 12;
-  hours = hours ? hours : 12;
-  minutes = minutes.toString().padStart(2, "0");
   hours = hours < 10 ? "0" + hours : hours;
-  let strTime = hours + ":" + minutes + " " + ampm;
-  return strTime;
+  minutes = minutes < 10 ? "0" + minutes : minutes;
+  return hours + ":" + minutes;
 };
 
 const getProgress = (full, percent) => {
@@ -31,37 +30,57 @@ const getProgress = (full, percent) => {
 };
 
 const Hydration = ({ navigation, route }) => {
-  const { user } = useContext();
+  const { user, baseUrl, setUser } = useContext();
+  console.log("user");
+  console.log(user.todayWaterEvent);
 
   const [fullWidthProgress, setFullWidthProgress] = useState(0);
   const [newValue, setNewValue] = useState(250);
-  const [alreadyDone, setAlreadyDone] = useState([
-    {
-      time: "05:45 PM",
-      value: 250,
-    },
-    {
-      time: "02:45 PM",
-      value: 250,
-    },
-    {
-      time: "12:45 PM",
-      value: 250,
-    },
-    {
-      time: "10:45 AM",
-      value: 250,
-    },
-    {
-      time: "08:45 AM",
-      value: 250,
-    },
-  ]);
-  const completed = alreadyDone.reduce((prev, curr) => ({
-    value: prev.value + curr.value,
-  })).value;
+  const [isFetching, setIsFetching] = useState(false);
+  const completed = user.todayWaterEvent.reduce(
+    (prev, curr) => ({
+      quantity: prev.quantity + curr.quantity,
+    }),
+    { quantity: 0 }
+  ).quantity;
   const left = user.waterNorm - completed;
   const completedPercent = Math.round((completed * 100) / user.waterNorm);
+
+  const addWaterEvent = async (value) => {
+    const token = await AsyncStorage.getItem("access_token");
+    try {
+      setIsFetching(true);
+      const resp = await fetch(`${baseUrl}/water-event/`, {
+        method: "post",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          quantity: value,
+          profile: user.profile,
+          created: new Date(),
+        }),
+      });
+      const json = await resp.json();
+      setUser({
+        ...user,
+        todayWaterEvent: [json, ...user.todayWaterEvent],
+      });
+      setNewValue(250);
+      setIsFetching(false);
+    } catch (err) {
+      setIsFetching(false);
+      showMessage({
+        message: "Something went wrong",
+        type: "danger",
+        style: {
+          paddingTop: 30,
+        },
+      });
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View>
@@ -122,14 +141,9 @@ const Hydration = ({ navigation, route }) => {
         />
         <Pressable
           style={styles.sliderControllerAdd}
+          disabled={isFetching}
           onPress={() => {
-            setAlreadyDone((prev) => {
-              return [
-                { value: newValue, time: formatAMPM(new Date()) },
-                ...prev,
-              ];
-            });
-            setNewValue(250);
+            addWaterEvent(newValue);
           }}
         >
           <Text style={styles.sliderControllerAddText}>Add portion</Text>
@@ -137,7 +151,7 @@ const Hydration = ({ navigation, route }) => {
       </View>
       <View style={styles.scrollWrapper}>
         <ScrollView>
-          {alreadyDone.map((el, index) => {
+          {user.todayWaterEvent.map((el, index) => {
             return (
               <View key={index} style={styles.drinkedBlock}>
                 <LinearGradient
@@ -146,8 +160,12 @@ const Hydration = ({ navigation, route }) => {
                   end={{ x: 1, y: 1 }}
                   style={styles.drinkedGradientBlock}
                 >
-                  <Text style={styles.drinkedBlockVolume}>{el.value} ml</Text>
-                  <Text style={styles.drinkedBlockDate}>{el.time}</Text>
+                  <Text style={styles.drinkedBlockVolume}>
+                    {el.quantity} ml
+                  </Text>
+                  <Text style={styles.drinkedBlockDate}>
+                    {formatAMPM(el.created)}
+                  </Text>
                 </LinearGradient>
               </View>
             );

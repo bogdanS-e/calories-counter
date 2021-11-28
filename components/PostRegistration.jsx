@@ -100,6 +100,7 @@ const PostRegistration = ({ navigation }) => {
           proteinNorm: json.protein_norm,
           sex: json.sex,
           profile: json.id,
+          todayWaterEvent: [],
         });
 
         navigation.navigate("nutrition", { page: "nutrition" });
