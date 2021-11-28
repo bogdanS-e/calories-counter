@@ -36,6 +36,7 @@ export const GlobalContextProvider = ({ children }) => {
     waterNorm: "",
     proteinNorm: "",
     sex: "",
+    profile: "",
   });
 
   const handleUser = (newUser) => {
@@ -105,6 +106,7 @@ export const GlobalContextProvider = ({ children }) => {
             proteinNorm: jsonUser.protein_norm,
             waterNorm: jsonUser.water_norm,
             sex: jsonUser.sex,
+            profile: jsonUser.id,
           });
 
           navigation.navigate("nutrition", { page: "nutrition" });
