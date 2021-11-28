@@ -17,7 +17,7 @@ export const GlobalContext = React.createContext({
 export const useContext = () => React.useContext(GlobalContext);
 
 export const GlobalContextProvider = ({ children }) => {
-  const baseUrl = 'http://e40c-91-237-27-112.ngrok.io/api';
+  const baseUrl = 'http://8a50-91-237-27-112.ngrok.io/api';
 
   const [user, setUser] = useState({
     name: '',
@@ -49,6 +49,7 @@ export const GlobalContextProvider = ({ children }) => {
             Authorization: `Bearer ${token}`,
           },
         });
+        console.log(resp.status);
 
         const json = await resp.json();
         console.log(json);
@@ -77,8 +78,6 @@ export const GlobalContextProvider = ({ children }) => {
     } catch (error) {
       console.log(error);
     }
-    
-    //navigation.navigate("statistic", { page: "statistic" })
   };
 
   return (

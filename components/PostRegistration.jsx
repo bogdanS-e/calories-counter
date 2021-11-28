@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import moment from "moment";
-
-import {
+import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Picker } from '@react-native-picker/picker'; import {
   StyleSheet,
   Text,
   TextInput,
@@ -18,8 +19,13 @@ import { useContext } from "../context/globalContext";
 
 const ScreenWidth = Dimensions.get("window").width;
 
+const radioProps = [
+  { label: 'male', value: 'male' },
+  { label: 'female', value: 'female' },
+];
+
 const PostRegistration = ({ navigation }) => {
-  const { setUser } = useContext();
+  const { setUser, baseUrl, checkUser } = useContext();
 
   const step1 = useRef(null);
   const step2 = useRef(null);
@@ -27,7 +33,10 @@ const PostRegistration = ({ navigation }) => {
   const [weight, setWeight] = useState("");
   const [height, setHeight] = useState("");
   const [date, setDate] = useState("");
+  const [sex, setSex] = useState(radioProps[0].label);
   const [step, setStep] = useState(0);
+  const [activity, setActivity] = useState();
+  const [activityList, setActivityList] = useState();
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   const showDatePicker = () => {
@@ -55,28 +64,47 @@ const PostRegistration = ({ navigation }) => {
     return true;
   };
 
+  const sendData = async () => {
+    const token = await AsyncStorage.getItem('access_token');
+
+    console.log(baseUrl);
+    console.log(JSON.stringify({
+      sex: "male",
+      width: 100,
+      height: 150,
+      birth_date: "2021-11-28",
+      physical_activity: 1,
+    }));
+    console.log(token);
+    console.log(`${baseUrl}/profile/`);
+    try {
+      const resp = await fetch(`${baseUrl}/profile/`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          "sex": "male",
+          "weight": 100,
+          "height": 150,
+          "birth_date": "2021-11-28",
+          "physical_activity": 1
+        }),
+      });
+
+      console.log("SEND");
+      const json = await resp.json();
+      console.log(json);
+    } catch (error) {
+      console.log(error);
+    }
+
+  }
+
   const incrementStep = () => {
-    if (step === 2) {
-      if (!date) {
-        Vibration.vibrate(400, false);
-
-        return /*showMessage({
-          message: "Validation error",
-          description: "Enter a valid weight",
-          type: "danger",
-          style: {
-            paddingTop: 30,
-          }
-        })*/;
-      }
-
-      //request to back end here
-      setUser({
-        height,
-        weight,
-        birthDate: date,
-      }); //fill context after responce and go ahead;
-      return navigation.navigate("statistic", { page: "statistic" });
+    if (step === 4) {
+      sendData();
+      return;
     }
 
     setStep((prev) => {
@@ -85,14 +113,6 @@ const PostRegistration = ({ navigation }) => {
 
         if (!validWeight || validWeight < 10 || validWeight > 300) {
           step1.current.focus();
-          /*showMessage({
-            message: "Validation error",
-            description: "Enter a valid weight",
-            type: "danger",
-            style: {
-              paddingTop: 30,
-            }
-          });*/
           Vibration.vibrate(400, false);
           return prev;
         }
@@ -101,15 +121,21 @@ const PostRegistration = ({ navigation }) => {
 
         if (!validHeight || validHeight < 50 || validHeight > 300) {
           step2.current.focus();
-          /*showMessage({
+          Vibration.vibrate(400, false);
+          return prev;
+        }
+      } else if (prev === 2) {
+        if (!date) {
+          Vibration.vibrate(400, false);
+
+          showMessage({
             message: "Validation error",
-            description: "Enter a valid height",
+            description: "Enter a valid weight",
             type: "danger",
             style: {
               paddingTop: 30,
             }
-          });*/
-          Vibration.vibrate(400, false);
+          });
           return prev;
         }
       }
@@ -118,7 +144,32 @@ const PostRegistration = ({ navigation }) => {
     });
   };
 
+  const getActivity = async () => {
+    const token = await AsyncStorage.getItem('access_token');
+
+    try {
+      const resp = await fetch(`${baseUrl}/physical-activity/`, {
+        method: 'get',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const json = await resp.json();
+
+      console.log('Activity');
+      console.log(json);
+      setActivityList(json);
+      setActivity(json[0].id);
+    } catch (error) {
+      checkUser();
+    }
+
+  }
+
+  console.log(activity);
   useEffect(() => {
+    getActivity();
     BackHandler.addEventListener("hardwareBackPress", decrementStep);
 
     return () =>
@@ -223,6 +274,78 @@ const PostRegistration = ({ navigation }) => {
         </View>
       )}
 
+      {step === 3 && (
+        <View>
+          <Text style={styles.text1}>Choose your sex:</Text>
+          <LinearGradient
+            colors={["#9acf02", "#6e9762"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.sexlinearGradient}
+          >
+            <RadioForm
+              formHorizontal={true}
+              animation={true}
+            >
+              {
+                radioProps.map((obj, i) => (
+                  <RadioButton labelHorizontal={true} key={i} >
+                    <RadioButtonInput
+                      obj={obj}
+                      index={i}
+                      isSelected={sex === obj.label}
+                      onPress={(sex) => setSex(sex)}
+                      borderWidth={1}
+                      buttonInnerColor='#fff'
+                      buttonOuterColor='#fff'
+                      buttonStyle={{ marginLeft: 0 }}
+                    />
+                    <RadioButtonLabel
+                      obj={obj}
+                      index={i}
+                      labelHorizontal={true}
+                      onPress={(sex) => setSex(sex)}
+                      labelStyle={{
+                        fontSize: 21,
+                        color: '#fff'
+                      }}
+                      labelWrapStyle={{
+                        marginRight: 60,
+                      }}
+                    />
+                  </RadioButton>
+                ))
+              }
+            </RadioForm>
+          </LinearGradient>
+        </View>
+      )}
+
+      {step === 4 && (
+        <View>
+          <Text style={styles.text1}>Select your activity:</Text>
+          <Picker
+            style={{
+              width: 300,
+              backgroundColor: '#9acf02',
+              borderRadius: 40,
+              fontSize: 20,
+              overflow: 'hidden',
+            }}
+            selectedValue={activity}
+            onValueChange={(itemValue) =>
+              setActivity(itemValue)
+            }>
+            {Array.isArray(activityList) && activityList.map((activity) => (
+              <Picker.Item
+                label={activity.name}
+                value={activity.id}
+                key={activity.id}
+              />
+            ))}
+          </Picker>
+        </View>
+      )}
       <View style={styles.controllerContainer}>
         <Text style={styles.text3}>
           All your information is confidencial and will be only visible for you
@@ -310,6 +433,17 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     paddingVertical: 10,
     paddingHorizontal: 25,
+  },
+  sexlinearGradient: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: 300,
+    height: 100,
+    borderRadius: 12,
+    overflow: "hidden",
+    paddingVertical: 20,
+    paddingHorizontal: 20,
   },
   numberInput: {
     backgroundColor: "#fff",
