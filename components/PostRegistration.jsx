@@ -82,6 +82,7 @@ const PostRegistration = ({ navigation }) => {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
+          "content-type": "application/json",
         },
         body: JSON.stringify({
           "sex": "male",
