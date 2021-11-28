@@ -51,7 +51,6 @@ const Nutrition = ({ navigation, route }) => {
               style={styles.progressBar}
               onLayout={(event) => {
                 const { width } = event.nativeEvent.layout;
-                setFullWidthProgress(width);
               }}
             >
               <View style={getProgress()}></View>

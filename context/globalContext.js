@@ -3,10 +3,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const GlobalContext = React.createContext({
   user: {
-    name: '',
-    height: '',
-    weight: '',
-    birthDate: '',
+    name: "",
+    height: "",
+    weight: "",
+    birthDate: "",
+    caloriesNorm: "",
+    carbohydrateNorm: "",
+    fatsNorm: "",
+    waterNorm: "",
+    proteinNorm: "",
+    sex: "",
   },
   baseUrl: '',
   setUser: (user) => { },
@@ -17,13 +23,19 @@ export const GlobalContext = React.createContext({
 export const useContext = () => React.useContext(GlobalContext);
 
 export const GlobalContextProvider = ({ children }) => {
-  const baseUrl = 'http://8a50-91-237-27-112.ngrok.io/api';
+  const baseUrl = 'http://88ed-91-237-27-112.ngrok.io/api';
 
   const [user, setUser] = useState({
-    name: '',
-    height: '',
-    weight: '',
-    birthDate: '',
+    name: "",
+    height: "",
+    weight: "",
+    birthDate: "",
+    caloriesNorm: "",
+    carbohydrateNorm: "",
+    fatsNorm: "",
+    waterNorm: "",
+    proteinNorm: "",
+    sex: "",
   });
 
   const handleUser = (newUser) => {
@@ -53,26 +65,49 @@ export const GlobalContextProvider = ({ children }) => {
 
         const json = await resp.json();
         console.log(json);
-  
-        if (json.code === 'token_not_valid') return;
 
-        if(json.username) {
-          const {username, is_ready, access_token} = json;
+        if (json.code === 'token_not_valid') {
+          return navigation.navigate("firstPage");
+        };
+
+        if (json.username) {
+          const { username, is_ready, access_token } = json;
 
           await AsyncStorage.setItem('access_token', access_token);
- 
+
           if (!is_ready) {
             return navigation.navigate("postRegistration");
           }
 
-          setUser({
-            name: username,
-            height: '',
-            weight: '',
-            birthDate: '',
+          const getUserResp = await fetch(`${baseUrl}/profile/`, {
+            method: 'get',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           });
 
-          navigation.navigate("statistic", { page: "statistic" });
+          const jsonUser = await getUserResp.json();
+
+          if (jsonUser.code === 'token_not_valid') {
+            return navigation.navigate("firstPage");
+          };
+
+          console.log(jsonUser);
+
+          setUser({
+            name: jsonUser.user.username,
+            height: jsonUser.height,
+            weight: jsonUser.weight,
+            birthDate: jsonUser.birth_date,
+            caloriesNorm: jsonUser.calories_norm,
+            carbohydrateNorm: jsonUser.carbohydrate_norm,
+            fatsNorm: jsonUser.fats_norm,
+            proteinNorm: jsonUser.protein_norm,
+            waterNorm: jsonUser.water_norm,
+            sex: jsonUser.sex,
+          });
+
+          navigation.navigate("nutrition", { page: "nutrition" });
         }
       }
     } catch (error) {

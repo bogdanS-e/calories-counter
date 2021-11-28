@@ -67,34 +67,43 @@ const PostRegistration = ({ navigation }) => {
   const sendData = async () => {
     const token = await AsyncStorage.getItem('access_token');
 
-    console.log(baseUrl);
-    console.log(JSON.stringify({
-      sex: "male",
-      width: 100,
-      height: 150,
-      birth_date: "2021-11-28",
-      physical_activity: 1,
-    }));
-    console.log(token);
-    console.log(`${baseUrl}/profile/`);
     try {
       const resp = await fetch(`${baseUrl}/profile/`, {
-        method: 'POST',
+        method: 'post',
         headers: {
+          "content-type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          "sex": "male",
-          "weight": 100,
-          "height": 150,
-          "birth_date": "2021-11-28",
-          "physical_activity": 1
+          sex,
+          weight: +weight,
+          height: +height,
+          birth_date: moment(date).format("YYYY-MM-DD"),
+          physical_activity: activity,
         }),
       });
 
-      console.log("SEND");
-      const json = await resp.json();
-      console.log(json);
+      if (resp.status === 201 || resp.status === 200) {
+        const json = await resp.json();
+
+        if (json.message) return;
+
+        setUser({
+          name: json.user.username,
+          height: json.height,
+          weight: json.weight,
+          birthDate: json.birth_date,
+          caloriesNorm: json.calories_norm,
+          carbohydrateNorm: json.carbohydrate_norm,
+          fatsNorm: json.fats_norm,
+          waterNorm: json.water_norm,
+          proteinNorm: json.protein_norm,
+          sex: json.sex,
+        });
+
+        navigation.navigate("nutrition", { page: "nutrition" });
+      }
+
     } catch (error) {
       console.log(error);
     }
