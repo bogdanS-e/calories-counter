@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const GlobalContext = React.createContext({
   user: {
@@ -15,11 +15,11 @@ export const GlobalContext = React.createContext({
     sex: "",
     profile: "",
   },
-  baseUrl: '',
-  setUser: (user) => { },
-  editUser: (newData) => { },
-  checkUser: () => { },
-})
+  baseUrl: "",
+  setUser: (user) => {},
+  editUser: (newData) => {},
+  checkUser: () => {},
+});
 
 export const useContext = () => React.useContext(GlobalContext);
 
@@ -38,27 +38,28 @@ export const GlobalContextProvider = ({ children }) => {
     proteinNorm: "",
     sex: "",
     profile: "",
+    todayWaterEvent: [],
   });
 
   const handleUser = (newUser) => {
     setUser(newUser);
-  }
+  };
 
   const handleEditUser = (newUserData) => {
     setUser((currentUser) => {
       return Object.assign(currentUser, newUserData);
     });
-  }
+  };
 
   const checkUser = async (navigation) => {
-    const token = await AsyncStorage.getItem('access_token');
+    const token = await AsyncStorage.getItem("access_token");
     console.log("CHECCK");
     console.log(token);
 
     try {
       if (token) {
         const resp = await fetch(`${baseUrl}/user-info/`, {
-          method: 'get',
+          method: "get",
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -68,21 +69,21 @@ export const GlobalContextProvider = ({ children }) => {
         const json = await resp.json();
         console.log(json);
 
-        if (json.code === 'token_not_valid') {
+        if (json.code === "token_not_valid") {
           return navigation.navigate("firstPage");
-        };
+        }
 
         if (json.username) {
           const { username, is_ready, access_token } = json;
 
-          await AsyncStorage.setItem('access_token', access_token);
+          await AsyncStorage.setItem("access_token", access_token);
 
           if (!is_ready) {
             return navigation.navigate("postRegistration");
           }
 
           const getUserResp = await fetch(`${baseUrl}/profile/`, {
-            method: 'get',
+            method: "get",
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -90,11 +91,21 @@ export const GlobalContextProvider = ({ children }) => {
 
           const jsonUser = await getUserResp.json();
 
-          if (jsonUser.code === 'token_not_valid') {
+          if (jsonUser.code === "token_not_valid") {
             return navigation.navigate("firstPage");
-          };
+          }
+
+          const getUserWater = await fetch(`${baseUrl}/water-event/`, {
+            method: "get",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          const jsonUserWater = await getUserWater.json();
 
           console.log(jsonUser);
+          console.log(jsonUserWater);
 
           setUser({
             name: jsonUser.user.username,
@@ -108,6 +119,7 @@ export const GlobalContextProvider = ({ children }) => {
             waterNorm: jsonUser.water_norm,
             sex: jsonUser.sex,
             profile: jsonUser.id,
+            todayWaterEvent: jsonUserWater,
           });
 
           navigation.navigate("nutrition", { page: "nutrition" });
@@ -130,5 +142,5 @@ export const GlobalContextProvider = ({ children }) => {
     >
       {children}
     </GlobalContext.Provider>
-  )
-}
+  );
+};
