@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, Pressable, ScrollView } from "react-native";
 import { Slider } from "@miblanchard/react-native-slider";
 import { LinearGradient } from "expo-linear-gradient";
 import NavBar from "./NavBar";
+import { useContext } from "../context/globalContext";
 
 const formatAMPM = (date) => {
   let hours = date.getHours();
@@ -30,7 +31,8 @@ const getProgress = (full, percent) => {
 };
 
 const Hydration = ({ navigation, route }) => {
-  const goal = 2450;
+  const { user } = useContext();
+
   const [fullWidthProgress, setFullWidthProgress] = useState(0);
   const [newValue, setNewValue] = useState(250);
   const [alreadyDone, setAlreadyDone] = useState([
@@ -58,8 +60,8 @@ const Hydration = ({ navigation, route }) => {
   const completed = alreadyDone.reduce((prev, curr) => ({
     value: prev.value + curr.value,
   })).value;
-  const left = goal - completed;
-  const completedPercent = Math.round((completed * 100) / goal);
+  const left = user.waterNorm - completed;
+  const completedPercent = Math.round((completed * 100) / user.waterNorm);
   return (
     <View style={styles.container}>
       <View>
@@ -86,7 +88,7 @@ const Hydration = ({ navigation, route }) => {
               ></View>
             </View>
             <View style={styles.horizontal}>
-              <Text style={styles.text2}>Goal: {goal} ml</Text>
+              <Text style={styles.text2}>Goal: {user.waterNorm} ml</Text>
               <Text style={styles.text3}>{completedPercent}% completed</Text>
             </View>
           </View>

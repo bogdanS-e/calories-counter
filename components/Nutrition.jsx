@@ -20,7 +20,7 @@ const formatAMPM = (date) => {
 
 const getProgress = () => {
   return {
-    backgroundColor: "#EBE9E9",
+    backgroundColor: "#B1D430",
     borderRadius: 5,
     height: 10,
     top: 0,
@@ -32,7 +32,12 @@ const getProgress = () => {
 
 const Nutrition = ({ navigation, route }) => {
   const { user } = useContext();
-
+  const [progressWidth, setProgressWidth] = useState({
+    carbs: 0,
+    cals: 0,
+    fats: 0,
+    proteins: 0,
+  });
   return (
     <View style={styles.container}>
       <View>
@@ -41,23 +46,73 @@ const Nutrition = ({ navigation, route }) => {
           <View>
             <View style={styles.horizontal}>
               <Text style={styles.text2}>Hey, {user.name}!</Text>
-              <Text style={styles.text1}>Let's check your calories today!</Text>
+              <Text style={styles.text1}>1500</Text>
             </View>
             <View style={styles.horizontal}>
-              <Text style={styles.text3}>1500</Text>
+              <Text style={styles.text3}>Let's check your calories today!</Text>
               <Text style={styles.text3}>Cal left</Text>
             </View>
             <View
               style={styles.progressBar}
               onLayout={(event) => {
                 const { width } = event.nativeEvent.layout;
+                setProgressWidth((prev) => ({
+                  ...prev,
+                  cals: width,
+                }));
               }}
             >
               <View style={getProgress()}></View>
             </View>
             <View style={styles.horizontal}>
-              <Text style={styles.text2}>Goal: 65 ml</Text>
-              <Text style={styles.text3}>65% completed</Text>
+              <View style={styles.particularValues}>
+                <Text style={styles.text3}>Carbs</Text>
+                <View
+                  style={styles.progressBarSmall}
+                  onLayout={(event) => {
+                    const { width } = event.nativeEvent.layout;
+                    setProgressWidth((prev) => ({
+                      ...prev,
+                      carbs: width,
+                    }));
+                  }}
+                >
+                  <View style={getProgress()}></View>
+                </View>
+                <Text style={styles.text3}>35g left</Text>
+              </View>
+              <View style={styles.particularValuesCenter}>
+                <Text style={styles.text3}>Proteins</Text>
+                <View
+                  style={styles.progressBarSmall}
+                  onLayout={(event) => {
+                    const { width } = event.nativeEvent.layout;
+                    setProgressWidth((prev) => ({
+                      ...prev,
+                      proteins: width,
+                    }));
+                  }}
+                >
+                  <View style={getProgress()}></View>
+                </View>
+                <Text style={styles.text3}>83g left</Text>
+              </View>
+              <View style={styles.particularValues}>
+                <Text style={styles.text3}>Fats</Text>
+                <View
+                  style={styles.progressBarSmall}
+                  onLayout={(event) => {
+                    const { width } = event.nativeEvent.layout;
+                    setProgressWidth((prev) => ({
+                      ...prev,
+                      carbs: width,
+                    }));
+                  }}
+                >
+                  <View style={getProgress()}></View>
+                </View>
+                <Text style={styles.text3}>12g left</Text>
+              </View>
             </View>
           </View>
         </View>
@@ -174,11 +229,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   mainInfo: {
-    marginTop: 30,
+    marginTop: 15,
     padding: 15,
     marginHorizontal: 30,
     backgroundColor: "white",
-    height: 150,
+    height: 175,
     borderRadius: 15,
   },
   horizontal: {
@@ -186,21 +241,27 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
+  particularValues: {
+    flex: 1,
+  },
+  particularValuesCenter: {
+    marginHorizontal: 10,
+    flex: 1,
+  },
   progressBar: {
     backgroundColor: "#DCDFE6",
     height: 10,
     borderRadius: 5,
-    marginVertical: 20,
+    marginTop: 20,
+    marginBottom: 15,
     position: "relative",
   },
-  progressBarCenter: {
-    backgroundColor: "#4065A9",
-    borderRadius: 5,
+  progressBarSmall: {
+    backgroundColor: "#DCDFE6",
     height: 10,
-    top: 0,
-    left: 0,
-    width: 100,
-    position: "absolute",
+    borderRadius: 5,
+    marginVertical: 5,
+    position: "relative",
   },
   text1: {
     fontSize: 20,
@@ -222,7 +283,7 @@ const styles = StyleSheet.create({
   },
   foodBlock: {
     marginVertical: 5,
-    marginHorizontal: 40,
+    marginHorizontal: 30,
   },
   foodIcon: {
     minHeight: 30,
@@ -252,7 +313,7 @@ const styles = StyleSheet.create({
   },
   foodBlockRec: {
     color: "#EBE9E9",
-    fontSize: 16,
+    fontSize: 12,
   },
   foodBlockNow: {
     backgroundColor: "#7DAA59",
