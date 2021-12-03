@@ -24,7 +24,7 @@ export const GlobalContext = React.createContext({
 export const useContext = () => React.useContext(GlobalContext);
 
 export const GlobalContextProvider = ({ children }) => {
-  const baseUrl = 'http://9ac8-92-111-145-202.ngrok.io/api';
+  const baseUrl = "http://9ac8-92-111-145-202.ngrok.io/api";
 
   const [user, setUser] = useState({
     name: "",
@@ -39,6 +39,7 @@ export const GlobalContextProvider = ({ children }) => {
     sex: "",
     profile: "",
     todayWaterEvent: [],
+    eatingCategory: [],
   });
 
   const handleUser = (newUser) => {
@@ -53,8 +54,6 @@ export const GlobalContextProvider = ({ children }) => {
 
   const checkUser = async (navigation) => {
     const token = await AsyncStorage.getItem("access_token");
-    console.log("CHECCK");
-    console.log(token);
 
     try {
       if (token) {
@@ -64,10 +63,8 @@ export const GlobalContextProvider = ({ children }) => {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log(resp.status);
 
         const json = await resp.json();
-        console.log(json);
 
         if (json.code === "token_not_valid") {
           return navigation.navigate("firstPage");
@@ -104,8 +101,14 @@ export const GlobalContextProvider = ({ children }) => {
 
           const jsonUserWater = await getUserWater.json();
 
-          console.log(jsonUser);
-          console.log(jsonUserWater);
+          const getEatingCategory = await fetch(`${baseUrl}/eating-category/`, {
+            method: "get",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          const eatingCategoryJson = await getEatingCategory.json();
 
           setUser({
             name: jsonUser.user.username,
@@ -120,6 +123,7 @@ export const GlobalContextProvider = ({ children }) => {
             sex: jsonUser.sex,
             profile: jsonUser.id,
             todayWaterEvent: jsonUserWater.results,
+            eatingCategory: eatingCategoryJson.results,
           });
 
           navigation.navigate("nutrition", { page: "nutrition" });

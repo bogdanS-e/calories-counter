@@ -38,6 +38,7 @@ const Nutrition = ({ navigation, route }) => {
     fats: 0,
     proteins: 0,
   });
+  console.log(user.eatingCategory);
   return (
     <View style={styles.container}>
       <View>
@@ -119,94 +120,36 @@ const Nutrition = ({ navigation, route }) => {
       </View>
       <View style={styles.scrollWrapper}>
         <ScrollView>
-          <Pressable
-            style={styles.foodBlock}
-            onPress={() => navigation.navigate("food", { page: "breakfast" })}
-          >
-            <LinearGradient
-              colors={["#9ACF01", "#74A637"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.foodGradientBlock}
-            >
-              <View style={styles.foodIcon}>
-                <Text style={styles.foodIconText}>+</Text>
-              </View>
-              <View>
-                <Text style={styles.foodBlockTitle}>Breakfast</Text>
-                <Text style={styles.foodBlockRec}>Recommended: 300 cal</Text>
-              </View>
-              <View style={styles.foodBlockNow}>
-                <Text style={styles.foodBlockNowText}>287 cal</Text>
-              </View>
-            </LinearGradient>
-          </Pressable>
-          <Pressable
-            style={styles.foodBlock}
-            onPress={() => navigation.navigate("food", { page: "lunch" })}
-          >
-            <LinearGradient
-              colors={["#9ACF01", "#74A637"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.foodGradientBlock}
-            >
-              <View style={styles.foodIcon}>
-                <Text style={styles.foodIconText}>+</Text>
-              </View>
-              <View>
-                <Text style={styles.foodBlockTitle}>Lunch</Text>
-                <Text style={styles.foodBlockRec}>Recommended: 300 cal</Text>
-              </View>
-              <View style={styles.foodBlockNow}>
-                <Text style={styles.foodBlockNowText}>287 cal</Text>
-              </View>
-            </LinearGradient>
-          </Pressable>
-          <Pressable
-            style={styles.foodBlock}
-            onPress={() => navigation.navigate("food", { page: "snacks" })}
-          >
-            <LinearGradient
-              colors={["#9ACF01", "#74A637"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.foodGradientBlock}
-            >
-              <View style={styles.foodIcon}>
-                <Text style={styles.foodIconText}>+</Text>
-              </View>
-              <View>
-                <Text style={styles.foodBlockTitle}>Snacks</Text>
-                <Text style={styles.foodBlockRec}>Recommended: 300 cal</Text>
-              </View>
-              <View style={styles.foodBlockNow}>
-                <Text style={styles.foodBlockNowText}>287 cal</Text>
-              </View>
-            </LinearGradient>
-          </Pressable>
-          <Pressable
-            style={styles.foodBlock}
-            onPress={() => navigation.navigate("food", { page: "dinner" })}
-          >
-            <LinearGradient
-              colors={["#9ACF01", "#74A637"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.foodGradientBlock}
-            >
-              <View style={styles.foodIcon}>
-                <Text style={styles.foodIconText}>+</Text>
-              </View>
-              <View>
-                <Text style={styles.foodBlockTitle}>Dinner</Text>
-                <Text style={styles.foodBlockRec}>Recommended: 300 cal</Text>
-              </View>
-              <View style={styles.foodBlockNow}>
-                <Text style={styles.foodBlockNowText}>287 cal</Text>
-              </View>
-            </LinearGradient>
-          </Pressable>
+          {user.eatingCategory.map((el) => {
+            return (
+              <Pressable
+                style={styles.foodBlock}
+                onPress={() =>
+                  navigation.navigate("food", { page: el.id })
+                }
+              >
+                <LinearGradient
+                  colors={["#9ACF01", "#74A637"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.foodGradientBlock}
+                >
+                  <View style={styles.foodIcon}>
+                    <Text style={styles.foodIconText}>+</Text>
+                  </View>
+                  <View>
+                    <Text style={styles.foodBlockTitle}>{el.name}</Text>
+                    <Text style={styles.foodBlockRec}>
+                      Recommended: 300 cal
+                    </Text>
+                  </View>
+                  <View style={styles.foodBlockNow}>
+                    <Text style={styles.foodBlockNowText}>287 cal</Text>
+                  </View>
+                </LinearGradient>
+              </Pressable>
+            );
+          })}
         </ScrollView>
       </View>
       <NavBar navigation={navigation} route={route} />
