@@ -25,7 +25,7 @@ export default function App() {
       <GlobalContextProvider>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="firstPage" component={ChooseFood} />
+          <Stack.Screen name="firstPage" component={FirstPage} />
           <Stack.Screen name="signIn" component={SignIn} />
           <Stack.Screen name="signUp" component={SignUp} />
           <Stack.Screen name="postRegistration" component={PostRegistration} />

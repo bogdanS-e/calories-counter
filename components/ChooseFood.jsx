@@ -9,7 +9,7 @@ const ScreenWidth = Dimensions.get("window").width;
 
 const ChooseFood = ({ navigation, route }) => {
   const { baseUrl } = useContext();
-
+console.log(route);
   const [modalVisible, setModalVisible] = useState(false);
   const [categories, setCategories] = useState([]);
   const [height, setHeight] = useState("");
@@ -43,7 +43,7 @@ const ChooseFood = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Food</Text>
+      <Text style={styles.header}>Choose Food</Text>
       <View style={styles.mainInfo}>
         <TextInput style={styles.search} placeholder='Search' onChangeText={(newText) => setSearchText(newText)} />
       </View>

@@ -19,7 +19,9 @@ const Food = ({ navigation, route }) => {
       console.log(json);
       setCategories(json);
     }
-
+    /* navigation.navigate("chooseFood", { page: "chooseFood", state: {
+      type: route.params.page,
+    } }); */
     getFood();
   }, []);
 
@@ -62,7 +64,7 @@ const Food = ({ navigation, route }) => {
           }
         </ScrollView>
       </View>
-      <NavBar navigation={navigation} route={route} />
+      {/* <NavBar navigation={navigation} route={route} /> */}
     </View>
   );
 };
