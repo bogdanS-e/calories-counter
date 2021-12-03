@@ -38,7 +38,7 @@ const Nutrition = ({ navigation, route }) => {
     fats: 0,
     proteins: 0,
   });
-  console.log(user.eatingCategory);
+  console.log(user);
   return (
     <View style={styles.container}>
       <View>
