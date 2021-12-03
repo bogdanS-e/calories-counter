@@ -27,7 +27,6 @@ const Profile = ({ navigation, route }) => {
   const sendData = async () => {
     const token = await AsyncStorage.getItem('access_token');
 
-    console.log('UPDATE DATA');
     try {
       const resp = await fetch(`${baseUrl}/profile/`, {
         method: 'PATCH',

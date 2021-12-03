@@ -15,6 +15,7 @@ import Hydration from "./components/Hydration";
 import SignIn from "./components/signIn";
 import SignUp from "./components/signUp";
 import Food from "./components/Food";
+import ChooseFood from "./components/ChooseFood";
 
 const Stack = createNativeStackNavigator();
 
@@ -24,7 +25,7 @@ export default function App() {
       <GlobalContextProvider>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="firstPage" component={FirstPage} />
+          <Stack.Screen name="firstPage" component={ChooseFood} />
           <Stack.Screen name="signIn" component={SignIn} />
           <Stack.Screen name="signUp" component={SignUp} />
           <Stack.Screen name="postRegistration" component={PostRegistration} />
@@ -33,6 +34,7 @@ export default function App() {
           <Stack.Screen name="hydration" component={Hydration} />
           <Stack.Screen name="profile" component={Profile} />
           <Stack.Screen name="food" component={Food} />
+          <Stack.Screen name="chooseFood" component={ChooseFood} />
         </Stack.Navigator>
       </NavigationContainer>
       <FlashMessage position="top" /> 

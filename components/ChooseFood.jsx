@@ -1,14 +1,18 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet, View, Text, TextInput, ScrollView, Image, Dimensions } from "react-native";
 import NavBar from "./NavBar";
 import { useContext } from "../context/globalContext";
+import { Alert, Modal, Pressable } from "react-native";
 
 const ScreenWidth = Dimensions.get("window").width;
 
-const Food = ({ navigation, route }) => {
-  const {baseUrl} = useContext();
-   
+const ChooseFood = ({ navigation, route }) => {
+  const { baseUrl } = useContext();
+
+  const [modalVisible, setModalVisible] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [height, setHeight] = useState("");
 
   useEffect(() => {
     const getFood = async () => {
@@ -56,18 +60,163 @@ const Food = ({ navigation, route }) => {
               </View>
             ))
           ) : (<>
-            <Text style={styles.noResult}>There are no categories that contain "{searchText}"</Text>
+            <Text style={styles.noResult}>There are no food that contain "{searchText}"</Text>
             <Image style={styles.image2} source={require("../assets/avocado2.png")} />
           </>)
           }
+          <Modal
+            animationType="slide"
+            visible={modalVisible}
+            transparent={true}
+            onRequestClose={() => {
+              setModalVisible(!modalVisible);
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <LinearGradient
+                  colors={["#9acf02", "#6e9762"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.linearGradient}
+                >
+                  <Text style={styles.text2}>Enter food gramms</Text>
+                  <View style={styles.inputContainer}>
+                    <TextInput
+                      style={styles.numberInput}
+                      keyboardType="numeric"
+                      placeholder="160"
+                      onChangeText={(height) => setHeight(height)}
+                      value={height}
+                      onSubmitEditing={() => { }}
+                    />
+                    <TextInput
+                      style={styles.disableInput}
+                      placeholder="g"
+                      value="g"
+                      underlineColorAndroid="transparent"
+                      editable={false}
+                      selectTextOnFocus={false}
+                    />
+                  </View>
+                </LinearGradient>
+                <View style={styles.control}>
+                  <Pressable
+                    style={[styles.button, styles.buttonClose]}
+                    onPress={() => setModalVisible(!modalVisible)}
+                  >
+                    <Text style={styles.textStyle}>Cancel</Text>
+                  </Pressable>
+                  <Pressable
+                    style={[styles.button, styles.buttonClose2]}
+                    onPress={() =>{}}
+                  >
+                    <Text style={styles.textStyle}>Add</Text>
+                  </Pressable>
+                </View>
+              </View>
+            </View>
+          </Modal>
+          <Pressable
+            style={[styles.button, styles.buttonOpen]}
+            onPress={() => setModalVisible(true)}
+          >
+            <Text style={styles.textStyle}>Show Modal</Text>
+          </Pressable>
         </ScrollView>
       </View>
-      <NavBar navigation={navigation} route={route} />
+      {/* <NavBar navigation={navigation} route={route} /> */}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  linearGradient: {
+    width: 300,
+    height: 150,
+    marginBottom: 40,
+    borderRadius: 12,
+    overflow: "hidden",
+    paddingVertical: 10,
+    paddingHorizontal: 25,
+  },
+  disableInput: {
+    backgroundColor: "#fff",
+    textAlign: "center",
+    width: 50,
+    height: 40,
+    borderRadius: 14,
+    paddingHorizontal: 10,
+    fontSize: 20,
+  },
+  numberInput: {
+    backgroundColor: "#fff",
+    width: 170,
+    height: 40,
+    borderRadius: 14,
+    paddingHorizontal: 10,
+    fontSize: 20,
+  },
+  inputContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  control: {
+    width: 300,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    marginHorizontal: 10,
+    width: 100,
+    fontSize: 20,
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  buttonClose2: {
+    backgroundColor: "#81B23B",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center"
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    width: 350,
+    height: 300,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
   container: {
     display: "flex",
     flex: 1,
@@ -171,9 +320,11 @@ const styles = StyleSheet.create({
     color: "#3B3B3B",
   },
   text2: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: "bold",
     color: "#3B3B3B",
+    marginBottom: 20,
+    marginTop: 10,
   },
   text3: {
     fontSize: 12,
@@ -231,4 +382,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Food;
+export default ChooseFood;
