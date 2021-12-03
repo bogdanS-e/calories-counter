@@ -169,11 +169,11 @@ const PostRegistration = ({ navigation }) => {
       const json = await resp.json();
 
       console.log('Activity');
-      console.log(json);
-      setActivityList(json);
-      setActivity(json[0].id);
+      console.log(json.results);
+      setActivityList(json.results);
+      setActivity(json.results[0].id);
     } catch (error) {
-      checkUser();
+      checkUser(navigation);
     }
 
   }

@@ -1,20 +1,37 @@
 import React from "react";
 import { StyleSheet, Pressable, View, Text } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
+import IconBrand from "react-native-vector-icons/Ionicons";
+import IconBrandMaterial from "react-native-vector-icons/MaterialCommunityIcons";
 import { Dimensions } from "react-native";
 
 const ScreenWidth = Dimensions.get("window").width;
 
-const pages = ["nutrition", "hydration", "profile"];
-
+const pages = ["statistic", "nutrition", "hydration", "profile"];
+//area-chart
+//pie-chart
 const NavBar = ({ navigation, route }) => {
   const page = route.params.page;
   return (
     <View style={styles.container}>
       <View
-        style={createSign((pages.indexOf(page) * ScreenWidth) / 3, ScreenWidth)}
+        style={createSign((pages.indexOf(page) * ScreenWidth) / 4, ScreenWidth)}
       ></View>
       <View style={styles.bottomNavigation}>
+      <Pressable
+          style={page === "statistic" ? styles.buttonActive : styles.button}
+          onPress={() =>
+            navigation.navigate("statistic", { page: "statistic" })
+          }
+        >
+          <Text style={styles.iconStyle}>
+            <Icon
+              name="area-chart"
+              size={page === "nutrition" ? 32 : 24}
+              color="#FFFFF4"
+            />
+          </Text>
+        </Pressable>
         <Pressable
           style={page === "nutrition" ? styles.buttonActive : styles.button}
           onPress={() =>
@@ -22,8 +39,8 @@ const NavBar = ({ navigation, route }) => {
           }
         >
           <Text style={styles.iconStyle}>
-            <Icon
-              name="home"
+            <IconBrandMaterial
+              name="nutrition"
               size={page === "nutrition" ? 32 : 24}
               color="#FFFFF4"
             />
@@ -36,8 +53,8 @@ const NavBar = ({ navigation, route }) => {
           }
         >
           <Text style={styles.iconStyle}>
-            <Icon
-              name="user"
+            <IconBrandMaterial
+              name="cup-water"
               size={page === "hydration" ? 32 : 24}
               color="#FFFFF4"
             />
@@ -65,7 +82,7 @@ let createSign = function(margin, screen) {
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     flex: 1,
-    width: screen / 3,
+    width: screen / 4,
     maxHeight: 9,
     backgroundColor: "#B1D430",
     marginLeft: margin,

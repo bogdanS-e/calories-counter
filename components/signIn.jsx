@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Pressable, TextInput } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Dimensions } from "react-native";
 import { showMessage } from "react-native-flash-message";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useContext } from "../context/globalContext";
 
@@ -21,7 +21,7 @@ const NewSignIn = ({ navigation }) => {
       setIsFetching(true);
 
       const resp = await fetch(`${baseUrl}/token/`, {
-        method: 'post',
+        method: "post",
         headers: {
           "content-type": "application/json",
         },
@@ -41,13 +41,12 @@ const NewSignIn = ({ navigation }) => {
           type: "danger",
           style: {
             paddingTop: 30,
-          }
+          },
         });
       }
 
-      await AsyncStorage.setItem('access_token', json.access);
+      await AsyncStorage.setItem("access_token", json.access);
       checkUser(navigation);
-
     } catch (_) {
       console.log(_);
       showMessage({
@@ -55,7 +54,7 @@ const NewSignIn = ({ navigation }) => {
         type: "danger",
         style: {
           paddingTop: 30,
-        }
+        },
       });
     } finally {
       setIsFetching(false);
@@ -76,6 +75,7 @@ const NewSignIn = ({ navigation }) => {
           <Text style={styles.textTitles}>Password</Text>
         </View>
         <TextInput
+          secureTextEntry={true}
           style={styles.input}
           onChangeText={setPassword}
           value={password}
@@ -90,7 +90,9 @@ const NewSignIn = ({ navigation }) => {
           onPress={handleSignIn}
           disabled={isFetching}
         >
-          <Text style={styles.textButton}>{isFetching ? "Loading..." : "Sign in"}</Text>
+          <Text style={styles.textButton}>
+            {isFetching ? "Loading..." : "Sign in"}
+          </Text>
         </Pressable>
       </View>
     </View>

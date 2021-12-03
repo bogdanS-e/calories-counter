@@ -31,9 +31,6 @@ const getProgress = (full, percent) => {
 
 const Hydration = ({ navigation, route }) => {
   const { user, baseUrl, setUser } = useContext();
-  console.log("user");
-  console.log(user.todayWaterEvent);
-
   const [fullWidthProgress, setFullWidthProgress] = useState(0);
   const [newValue, setNewValue] = useState(250);
   const [isFetching, setIsFetching] = useState(false);
@@ -71,6 +68,7 @@ const Hydration = ({ navigation, route }) => {
       setIsFetching(false);
     } catch (err) {
       setIsFetching(false);
+      console.log(err);
       showMessage({
         message: "Something went wrong",
         type: "danger",
