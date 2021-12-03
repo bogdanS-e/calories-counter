@@ -7,7 +7,7 @@ const ScreenWidth = Dimensions.get("window").width;
 
 const Food = ({ navigation, route }) => {
   const { baseUrl } = useContext();
-
+  console.log(route);
   const [categories, setCategories] = useState(null);
 
   useEffect(() => {
@@ -33,7 +33,7 @@ const Food = ({ navigation, route }) => {
       return null;
     }
 
-    return categories.filter((category) => category.name.includes(searchText.trim().toLocaleLowerCase()));
+    return categories.filter((category) => category.name.toLowerCase().includes(searchText.trim().toLowerCase()));
   }, [searchText, categories]);
 
   const goToChooseFood = (categoryId) => {
@@ -76,7 +76,7 @@ const Food = ({ navigation, route }) => {
           }
         </ScrollView>
       </View>
-      {/* <NavBar navigation={navigation} route={route} /> */}
+      <NavBar navigation={navigation} route={route} />
     </View >
   );
 };

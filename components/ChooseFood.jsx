@@ -38,7 +38,7 @@ const ChooseFood = ({ navigation, route }) => {
       return null;
     }
 
-    return categories.filter((category) => category.name.includes(searchText.trim().toLocaleLowerCase()));
+    return categories.filter((category) => category.name.toLowerCase().includes(searchText.trim().toLowerCase()));
   }, [searchText, categories]);
 
   const submit = async () => {
@@ -60,7 +60,7 @@ const ChooseFood = ({ navigation, route }) => {
       },
       body: JSON.stringify({
         quantity: quantity,
-        eating_category: 1,
+        eating_category: route.params.state.type,
         food_item: activeFood,
         profile: profile
       }),
