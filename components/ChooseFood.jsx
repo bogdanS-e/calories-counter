@@ -3,25 +3,25 @@ import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet, View, Text, TextInput, ScrollView, Image, Dimensions } from "react-native";
 import NavBar from "./NavBar";
 import { useContext } from "../context/globalContext";
-import { Alert, Modal, Pressable } from "react-native";
+import { Modal, Pressable } from "react-native";
+import { showMessage } from "react-native-flash-message";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ScreenWidth = Dimensions.get("window").width;
 
 const ChooseFood = ({ navigation, route }) => {
-  const { baseUrl } = useContext();
-console.log(route);
+  const { baseUrl, user: { profile }, checkUser } = useContext();
   const [modalVisible, setModalVisible] = useState(false);
-  const [categories, setCategories] = useState([]);
-  const [height, setHeight] = useState("");
+  const [categories, setCategories] = useState(null);
+  const [activeFood, setActiveFood] = useState();
+  const [quantity, setQuantity] = useState("");
 
   useEffect(() => {
     const getFood = async () => {
-      const resp = await fetch(`${baseUrl}/food-category/`);
+      const resp = await fetch(`${baseUrl}/food-item?category_id=${route.params.state.categoryId}`);
       const json = await resp.json();
 
-      console.log('FOOD');
-      console.log(json);
-      setCategories(json);
+      setCategories(json.results);
     }
 
     getFood();
@@ -35,11 +35,56 @@ console.log(route);
     }
 
     if (!Array.isArray(categories)) {
-      return [];
+      return null;
     }
 
     return categories.filter((category) => category.name.includes(searchText.trim().toLocaleLowerCase()));
   }, [searchText, categories]);
+
+  const submit = async () => {
+    console.log("SEND FOOD EVENT");
+    console.log(JSON.stringify({
+      quantity: quantity,
+      eating_category: 1,
+      food_item: activeFood,
+      profile: profile
+    }));
+
+    const token = await AsyncStorage.getItem("access_token");
+
+    const resp = await fetch(`${baseUrl}/food-event/`, {
+      method: 'post',
+      headers: {
+        "content-type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        quantity: quantity,
+        eating_category: 1,
+        food_item: activeFood,
+        profile: profile
+      }),
+    });
+
+    if (resp.status !== 201 && resp.status !== 200) {
+      checkUser(navigation);
+    }
+
+    const json = await resp.json();
+
+    console.log(json);
+    if (json.created) {
+      showMessage({
+        message: "Food added",
+        type: "success",
+        style: {
+          paddingTop: 30,
+        }
+      });
+    }
+  };
+
+  if (!filtredCategories) return null;
 
   return (
     <View style={styles.container}>
@@ -50,14 +95,22 @@ console.log(route);
       <View style={styles.scrollWrapper}>
         <ScrollView contentContainerStyle={styles.scrollView}>
           {filtredCategories.length ? (
-            filtredCategories.map(({ id, name, calories, imageUrl }) => (
-              <View style={styles.card} key={id}>
-                <Image style={styles.image} source={{ uri: imageUrl }} />
+            filtredCategories.map(({ id, name, calorie, carbohydrate, fats }) => (
+              <Pressable
+                style={styles.card}
+                key={id}
+                onPress={() => {
+                  setModalVisible(true);
+                  setActiveFood(id);
+                }}
+              >
                 <View style={styles.cardText} key={id}>
                   <Text style={styles.cardName}>{name}</Text>
-                  <Text style={styles.cardCalories}>{calories}</Text>
                 </View>
-              </View>
+                <Text style={styles.cardCalories}>{calorie}ccal / 100g</Text>
+                <Text style={styles.cardCalories}>{carbohydrate}carbohydrate / 100g</Text>
+                <Text style={styles.cardCalories}>{fats}fats / 100g</Text>
+              </Pressable>
             ))
           ) : (<>
             <Text style={styles.noResult}>There are no food that contain "{searchText}"</Text>
@@ -86,9 +139,8 @@ console.log(route);
                       style={styles.numberInput}
                       keyboardType="numeric"
                       placeholder="160"
-                      onChangeText={(height) => setHeight(height)}
-                      value={height}
-                      onSubmitEditing={() => { }}
+                      onChangeText={(quantity) => setQuantity(quantity)}
+                      value={quantity}
                     />
                     <TextInput
                       style={styles.disableInput}
@@ -109,7 +161,10 @@ console.log(route);
                   </Pressable>
                   <Pressable
                     style={[styles.button, styles.buttonClose2]}
-                    onPress={() =>{}}
+                    onPress={() => {
+                      setModalVisible(!modalVisible);
+                      submit();
+                    }}
                   >
                     <Text style={styles.textStyle}>Add</Text>
                   </Pressable>
@@ -117,15 +172,9 @@ console.log(route);
               </View>
             </View>
           </Modal>
-          <Pressable
-            style={[styles.button, styles.buttonOpen]}
-            onPress={() => setModalVisible(true)}
-          >
-            <Text style={styles.textStyle}>Show Modal</Text>
-          </Pressable>
         </ScrollView>
       </View>
-      {/* <NavBar navigation={navigation} route={route} /> */}
+      <NavBar navigation={navigation} route={route} />
     </View>
   );
 };
@@ -252,6 +301,7 @@ const styles = StyleSheet.create({
   },
   cardCalories: {
     fontSize: 18,
+    paddingLeft: 9,
     color: 'rgba(0,0,0,0.4)',
     marginVertical: 10,
     paddingRight: 8,

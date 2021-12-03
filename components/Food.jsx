@@ -1,27 +1,24 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { StyleSheet, View, Text, TextInput, ScrollView, Image, Dimensions } from "react-native";
+import { StyleSheet, View, Text, TextInput, Pressable, ScrollView, Image, Dimensions } from "react-native";
 import NavBar from "./NavBar";
 import { useContext } from "../context/globalContext";
 
 const ScreenWidth = Dimensions.get("window").width;
 
 const Food = ({ navigation, route }) => {
-  const {baseUrl} = useContext();
-   
-  const [categories, setCategories] = useState([]);
+  const { baseUrl } = useContext();
+
+  const [categories, setCategories] = useState(null);
 
   useEffect(() => {
     const getFood = async () => {
       const resp = await fetch(`${baseUrl}/food-category/`);
       const json = await resp.json();
 
-      console.log('FOOD');
+      console.log('Category');
       console.log(json);
-      setCategories(json);
+      setCategories(json.results);
     }
-    /* navigation.navigate("chooseFood", { page: "chooseFood", state: {
-      type: route.params.page,
-    } }); */
     getFood();
   }, []);
 
@@ -33,14 +30,25 @@ const Food = ({ navigation, route }) => {
     }
 
     if (!Array.isArray(categories)) {
-      return [];
+      return null;
     }
 
     return categories.filter((category) => category.name.includes(searchText.trim().toLocaleLowerCase()));
   }, [searchText, categories]);
 
+  const goToChooseFood = (categoryId) => {
+    navigation.navigate("chooseFood", {
+      page: "chooseFood", state: {
+        type: route.params.page,
+        categoryId: categoryId,
+      }
+    });
+  }
+
+  if (!filtredCategories) return null;
+
   return (
-    <View style={styles.container}>
+    <View style={styles.container} >
       <Text style={styles.header}>Food</Text>
       <View style={styles.mainInfo}>
         <TextInput style={styles.search} placeholder='Search' onChangeText={(newText) => setSearchText(newText)} />
@@ -48,14 +56,18 @@ const Food = ({ navigation, route }) => {
       <View style={styles.scrollWrapper}>
         <ScrollView contentContainerStyle={styles.scrollView}>
           {filtredCategories.length ? (
-            filtredCategories.map(({ id, name, calories, imageUrl }) => (
-              <View style={styles.card} key={id}>
-                <Image style={styles.image} source={{ uri: imageUrl }} />
+            filtredCategories.map(({ id, name, calories }) => (
+              <Pressable
+                style={styles.card}
+                key={id}
+                onPress={() => goToChooseFood(id)}
+              >
+                <Image style={styles.image} source={{ uri: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/marrot-1561576540.jpg?crop=0.443xw:0.786xh;0.277xw,0.0960xh&resize=480:*' }} />
                 <View style={styles.cardText} key={id}>
                   <Text style={styles.cardName}>{name}</Text>
                   <Text style={styles.cardCalories}>{calories}</Text>
                 </View>
-              </View>
+              </Pressable>
             ))
           ) : (<>
             <Text style={styles.noResult}>There are no categories that contain "{searchText}"</Text>
@@ -65,7 +77,7 @@ const Food = ({ navigation, route }) => {
         </ScrollView>
       </View>
       {/* <NavBar navigation={navigation} route={route} /> */}
-    </View>
+    </View >
   );
 };
 
