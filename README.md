@@ -4,9 +4,16 @@ Below you'll find information about performing common tasks. The most recent ver
 
 ## Table of Contents
 
-* Updating to New Releases
 * Available Scripts
   * expo start
   * expo run ios
   * expo run android
   
+* Steps to run the app
+  * install expo app on your mobile (Android or IOS)
+  * clone repo
+  * run npm i
+  * run expo start
+  * run expo app on your phone and open QR scanner
+  * scane QR code in the opened window on your computer
+  * wait until bundle start on your phone
