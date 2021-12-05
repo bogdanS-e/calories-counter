@@ -4,9 +4,9 @@ Below you'll find information about performing common tasks. The most recent ver
 
 ## Table of Contents
 
-* [Updating to New Releases](#updating-to-new-releases)
-* [Available Scripts](#available-scripts)
-  * [expo start](#npm-start)
-  * [expo run ios](#npm-run-ios)
-  * [expo run android](#npm-run-android)
+* Updating to New Releases
+* Available Scripts
+  * expo start
+  * expo run ios
+  * expo run android
   
