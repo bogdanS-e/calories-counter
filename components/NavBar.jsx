@@ -5,7 +5,7 @@ import IconBrandMaterial from "react-native-vector-icons/MaterialCommunityIcons"
 import { Dimensions } from "react-native";
 
 const ScreenWidth = Dimensions.get("window").width;
-
+// cheking button with validator is enabled
 const pages = ["statistic", "nutrition", "hydration", "profile"];
 //area-chart
 //pie-chart
