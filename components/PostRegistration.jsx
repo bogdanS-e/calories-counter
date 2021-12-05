@@ -1,9 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import moment from "moment";
-import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Picker } from '@react-native-picker/picker'; import {
+import RadioForm, {
+  RadioButton,
+  RadioButtonInput,
+  RadioButtonLabel,
+} from "react-native-simple-radio-button";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Picker } from "@react-native-picker/picker";
+import {
   StyleSheet,
   Text,
   TextInput,
@@ -20,8 +25,8 @@ import { useContext } from "../context/globalContext";
 const ScreenWidth = Dimensions.get("window").width;
 
 const radioProps = [
-  { label: 'male', value: 'male' },
-  { label: 'female', value: 'female' },
+  { label: "male", value: "male" },
+  { label: "female", value: "female" },
 ];
 
 const PostRegistration = ({ navigation }) => {
@@ -65,11 +70,11 @@ const PostRegistration = ({ navigation }) => {
   };
 
   const sendData = async () => {
-    const token = await AsyncStorage.getItem('access_token');
+    const token = await AsyncStorage.getItem("access_token");
 
     try {
       const resp = await fetch(`${baseUrl}/profile/`, {
-        method: 'post',
+        method: "post",
         headers: {
           "content-type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -82,6 +87,15 @@ const PostRegistration = ({ navigation }) => {
           physical_activity: activity,
         }),
       });
+
+      const getEatingCategory = await fetch(`${baseUrl}/eating-category/`, {
+        method: "get",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const eatingCategoryJson = await getEatingCategory.json();
 
       if (resp.status === 201 || resp.status === 200) {
         const json = await resp.json();
@@ -101,16 +115,15 @@ const PostRegistration = ({ navigation }) => {
           sex: json.sex,
           profile: json.id,
           todayWaterEvent: [],
+          eatingCategory: eatingCategoryJson.results,
         });
 
         navigation.navigate("nutrition", { page: "nutrition" });
       }
-
     } catch (error) {
       console.log(error);
     }
-
-  }
+  };
 
   const incrementStep = () => {
     if (step === 4) {
@@ -145,7 +158,7 @@ const PostRegistration = ({ navigation }) => {
             type: "danger",
             style: {
               paddingTop: 30,
-            }
+            },
           });
           return prev;
         }
@@ -156,11 +169,11 @@ const PostRegistration = ({ navigation }) => {
   };
 
   const getActivity = async () => {
-    const token = await AsyncStorage.getItem('access_token');
+    const token = await AsyncStorage.getItem("access_token");
 
     try {
       const resp = await fetch(`${baseUrl}/physical-activity/`, {
-        method: 'get',
+        method: "get",
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -168,15 +181,14 @@ const PostRegistration = ({ navigation }) => {
 
       const json = await resp.json();
 
-      console.log('Activity');
+      console.log("Activity");
       console.log(json.results);
       setActivityList(json.results);
       setActivity(json.results[0].id);
     } catch (error) {
       checkUser(navigation);
     }
-
-  }
+  };
 
   console.log(activity);
   useEffect(() => {
@@ -294,39 +306,34 @@ const PostRegistration = ({ navigation }) => {
             end={{ x: 1, y: 1 }}
             style={styles.sexlinearGradient}
           >
-            <RadioForm
-              formHorizontal={true}
-              animation={true}
-            >
-              {
-                radioProps.map((obj, i) => (
-                  <RadioButton labelHorizontal={true} key={i} >
-                    <RadioButtonInput
-                      obj={obj}
-                      index={i}
-                      isSelected={sex === obj.label}
-                      onPress={(sex) => setSex(sex)}
-                      borderWidth={1}
-                      buttonInnerColor='#fff'
-                      buttonOuterColor='#fff'
-                      buttonStyle={{ marginLeft: 0 }}
-                    />
-                    <RadioButtonLabel
-                      obj={obj}
-                      index={i}
-                      labelHorizontal={true}
-                      onPress={(sex) => setSex(sex)}
-                      labelStyle={{
-                        fontSize: 21,
-                        color: '#fff'
-                      }}
-                      labelWrapStyle={{
-                        marginRight: 60,
-                      }}
-                    />
-                  </RadioButton>
-                ))
-              }
+            <RadioForm formHorizontal={true} animation={true}>
+              {radioProps.map((obj, i) => (
+                <RadioButton labelHorizontal={true} key={i}>
+                  <RadioButtonInput
+                    obj={obj}
+                    index={i}
+                    isSelected={sex === obj.label}
+                    onPress={(sex) => setSex(sex)}
+                    borderWidth={1}
+                    buttonInnerColor="#fff"
+                    buttonOuterColor="#fff"
+                    buttonStyle={{ marginLeft: 0 }}
+                  />
+                  <RadioButtonLabel
+                    obj={obj}
+                    index={i}
+                    labelHorizontal={true}
+                    onPress={(sex) => setSex(sex)}
+                    labelStyle={{
+                      fontSize: 21,
+                      color: "#fff",
+                    }}
+                    labelWrapStyle={{
+                      marginRight: 60,
+                    }}
+                  />
+                </RadioButton>
+              ))}
             </RadioForm>
           </LinearGradient>
         </View>
@@ -338,22 +345,22 @@ const PostRegistration = ({ navigation }) => {
           <Picker
             style={{
               width: 300,
-              backgroundColor: '#9acf02',
+              backgroundColor: "#9acf02",
               borderRadius: 40,
               fontSize: 20,
-              overflow: 'hidden',
+              overflow: "hidden",
             }}
             selectedValue={activity}
-            onValueChange={(itemValue) =>
-              setActivity(itemValue)
-            }>
-            {Array.isArray(activityList) && activityList.map((activity) => (
-              <Picker.Item
-                label={activity.name}
-                value={activity.id}
-                key={activity.id}
-              />
-            ))}
+            onValueChange={(itemValue) => setActivity(itemValue)}
+          >
+            {Array.isArray(activityList) &&
+              activityList.map((activity) => (
+                <Picker.Item
+                  label={activity.name}
+                  value={activity.id}
+                  key={activity.id}
+                />
+              ))}
           </Picker>
         </View>
       )}
@@ -446,9 +453,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
   },
   sexlinearGradient: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
     width: 300,
     height: 100,
     borderRadius: 12,

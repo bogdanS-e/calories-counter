@@ -42,13 +42,6 @@ const ChooseFood = ({ navigation, route }) => {
   }, [searchText, categories]);
 
   const submit = async () => {
-    console.log("SEND FOOD EVENT");
-    console.log(JSON.stringify({
-      quantity: quantity,
-      eating_category: 1,
-      food_item: activeFood,
-      profile: profile
-    }));
 
     const token = await AsyncStorage.getItem("access_token");
 
@@ -95,7 +88,7 @@ const ChooseFood = ({ navigation, route }) => {
       <View style={styles.scrollWrapper}>
         <ScrollView contentContainerStyle={styles.scrollView}>
           {filtredCategories.length ? (
-            filtredCategories.map(({ id, name, calorie, carbohydrate, fats }) => (
+            filtredCategories.map(({ id, name, calorie, carbohydrate, fats, protein }) => (
               <Pressable
                 style={styles.card}
                 key={id}
@@ -107,9 +100,10 @@ const ChooseFood = ({ navigation, route }) => {
                 <View style={styles.cardText} key={id}>
                   <Text style={styles.cardName}>{name}</Text>
                 </View>
-                <Text style={styles.cardCalories}>{calorie}ccal / 100g</Text>
-                <Text style={styles.cardCalories}>{carbohydrate}carbohydrate / 100g</Text>
-                <Text style={styles.cardCalories}>{fats}fats / 100g</Text>
+                <Text style={styles.cardCalories}>{calorie} ccal / 100 g</Text>
+                <Text style={styles.cardCalories}>{carbohydrate} carbohydrate / 100 g</Text>
+                <Text style={styles.cardCalories}>{fats} fats / 100 g</Text>
+                <Text style={styles.cardCalories}>{protein} proteins / 100 g</Text>
               </Pressable>
             ))
           ) : (<>

@@ -1,7 +1,6 @@
 import React from "react";
 import { StyleSheet, Pressable, View, Text } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import IconBrand from "react-native-vector-icons/Ionicons";
 import IconBrandMaterial from "react-native-vector-icons/MaterialCommunityIcons";
 import { Dimensions } from "react-native";
 

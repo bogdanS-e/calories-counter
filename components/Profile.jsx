@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import IconBrand from "react-native-vector-icons/Ionicons";
 
 import {
   StyleSheet,
@@ -25,11 +26,11 @@ const Profile = ({ navigation, route }) => {
   const [height, setHeight] = useState(String(user.height) || "");
 
   const sendData = async () => {
-    const token = await AsyncStorage.getItem('access_token');
+    const token = await AsyncStorage.getItem("access_token");
 
     try {
       const resp = await fetch(`${baseUrl}/profile/`, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
           "content-type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -53,7 +54,11 @@ const Profile = ({ navigation, route }) => {
       console.log(error);
       checkUser(navigation);
     }
+  };
 
+  async function signOut() {
+    navigation.navigate("firstPage", { page: "firstPage" });
+    await AsyncStorage.setItem("access_token", json.access);
   }
 
   return (
@@ -63,7 +68,17 @@ const Profile = ({ navigation, route }) => {
       enabled={false}
     >
       <View style={styles.container}>
-        <Text style={styles.text1}>Profile</Text>
+        <View style={styles.topView}>
+          <Text style={styles.text1}>Profile</Text>
+          <IconBrand
+            size={24}
+            name="exit"
+            color="#000000"
+            onPress={async () => {
+              signOut();
+            }}
+          />
+        </View>
         <View>
           <LinearGradient
             colors={["#9acf02", "#6e9762"]}
@@ -145,6 +160,14 @@ const styles = StyleSheet.create({
     marginLeft: 30,
     marginVertical: 10,
   },
+  topView: {
+    marginTop: 40,
+    marginLeft: 200,
+    width: "80%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
   controllerContainer: {
     marginTop: -10,
     display: "flex",
@@ -187,7 +210,6 @@ const styles = StyleSheet.create({
   },
   text1: {
     alignSelf: "flex-start",
-    marginTop: 40,
     fontWeight: "bold",
     fontSize: 24,
   },

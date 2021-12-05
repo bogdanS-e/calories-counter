@@ -7,7 +7,7 @@ const ScreenWidth = Dimensions.get("window").width;
 
 const Food = ({ navigation, route }) => {
   const { baseUrl } = useContext();
-  console.log(route);
+
   const [categories, setCategories] = useState(null);
 
   useEffect(() => {
@@ -15,8 +15,6 @@ const Food = ({ navigation, route }) => {
       const resp = await fetch(`${baseUrl}/food-category/`);
       const json = await resp.json();
 
-      console.log('Category');
-      console.log(json);
       setCategories(json.results);
     }
     getFood();

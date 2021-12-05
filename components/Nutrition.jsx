@@ -3,7 +3,8 @@ import { StyleSheet, View, Text, Pressable, ScrollView } from "react-native";
 import { Slider } from "@miblanchard/react-native-slider";
 import { LinearGradient } from "expo-linear-gradient";
 import NavBar from "./NavBar";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useIsFocused } from "@react-navigation/native";
 import { useContext } from "../context/globalContext";
 
 const formatAMPM = (date) => {
@@ -18,27 +19,87 @@ const formatAMPM = (date) => {
   return strTime;
 };
 
-const getProgress = () => {
+const getProgress = (width, total, taken) => {
+  console.log(width, total, taken);
+  const percent = (taken * 100) / total;
   return {
     backgroundColor: "#B1D430",
     borderRadius: 5,
     height: 10,
     top: 0,
     left: 0,
-    width: 20,
+    width: (percent * width) / 100,
     position: "absolute",
   };
 };
 
 const Nutrition = ({ navigation, route }) => {
-  const { user } = useContext();
+  const { user, baseUrl } = useContext();
+  const isFocused = useIsFocused();
   const [progressWidth, setProgressWidth] = useState({
     carbs: 0,
     cals: 0,
     fats: 0,
     proteins: 0,
   });
-  console.log(user);
+
+  const [taken, setTaken] = useState([]);
+  const [totalTaken, setTotalTaken] = useState({
+    cals: 0,
+    fats: 0,
+    carbs: 0,
+    proteins: 0,
+  });
+
+  const normal = {
+    carbs: user.carbohydrateNorm,
+    cals: user.caloriesNorm,
+    fats: user.fatsNorm,
+    proteins: user.proteinNorm,
+  };
+
+
+  const getInfo = async () => {
+    try {
+      const token = await AsyncStorage.getItem("access_token");
+
+      const getEating = await fetch(`${baseUrl}/statistics/?period=today`, {
+        method: "get",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const eatingJson = await getEating.json();
+
+      if (Array.isArray(eatingJson)) {
+        const newObject = {
+          cals: 0,
+          carbs: 0,
+          fats: 0,
+          proteins: 0,
+        };
+
+        eatingJson.forEach((el) => {
+          newObject.cals += el.food_item__calorie__sum;
+          newObject.carbs += el.food_item__carbohydrate__sum;
+          newObject.fats += el.food_item__fats__sum;
+          newObject.proteins += el.food_item__protein__sum;
+        });
+
+        setTotalTaken(newObject);
+      }
+
+      setTaken(eatingJson);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  React.useEffect(() => {
+    if (isFocused) getInfo();
+  }, [isFocused]);
+
   return (
     <View style={styles.container}>
       <View>
@@ -47,7 +108,7 @@ const Nutrition = ({ navigation, route }) => {
           <View>
             <View style={styles.horizontal}>
               <Text style={styles.text2}>Hey, {user.name}!</Text>
-              <Text style={styles.text1}>1500</Text>
+              <Text style={styles.text1}>{(normal.cals - totalTaken.cals).toFixed(0)}</Text>
             </View>
             <View style={styles.horizontal}>
               <Text style={styles.text3}>Let's check your calories today!</Text>
@@ -63,7 +124,13 @@ const Nutrition = ({ navigation, route }) => {
                 }));
               }}
             >
-              <View style={getProgress()}></View>
+              <View
+                style={getProgress(
+                  progressWidth.cals,
+                  normal.cals,
+                  totalTaken.cals
+                )}
+              ></View>
             </View>
             <View style={styles.horizontal}>
               <View style={styles.particularValues}>
@@ -78,9 +145,15 @@ const Nutrition = ({ navigation, route }) => {
                     }));
                   }}
                 >
-                  <View style={getProgress()}></View>
+                  <View
+                    style={getProgress(
+                      progressWidth.carbs,
+                      normal.carbs,
+                      totalTaken.carbs
+                    )}
+                  ></View>
                 </View>
-                <Text style={styles.text3}>35g left</Text>
+                <Text style={styles.text3}>{(normal.carbs - totalTaken.carbs).toFixed(0)}g left</Text>
               </View>
               <View style={styles.particularValuesCenter}>
                 <Text style={styles.text3}>Proteins</Text>
@@ -94,9 +167,15 @@ const Nutrition = ({ navigation, route }) => {
                     }));
                   }}
                 >
-                  <View style={getProgress()}></View>
+                  <View
+                    style={getProgress(
+                      progressWidth.proteins,
+                      normal.proteins,
+                      totalTaken.proteins
+                    )}
+                  ></View>
                 </View>
-                <Text style={styles.text3}>83g left</Text>
+                <Text style={styles.text3}>{(normal.proteins - totalTaken.proteins).toFixed(0)}g left</Text>
               </View>
               <View style={styles.particularValues}>
                 <Text style={styles.text3}>Fats</Text>
@@ -110,9 +189,15 @@ const Nutrition = ({ navigation, route }) => {
                     }));
                   }}
                 >
-                  <View style={getProgress()}></View>
+                  <View
+                    style={getProgress(
+                      progressWidth.fats,
+                      normal.fats,
+                      totalTaken.fats
+                    )}
+                  ></View>
                 </View>
-                <Text style={styles.text3}>12g left</Text>
+                <Text style={styles.text3}>{(normal.fats - totalTaken.fats).toFixed(0)}g left</Text>
               </View>
             </View>
           </View>
@@ -123,10 +208,9 @@ const Nutrition = ({ navigation, route }) => {
           {user.eatingCategory.map((el) => {
             return (
               <Pressable
+                key={el.id}
                 style={styles.foodBlock}
-                onPress={() =>
-                  navigation.navigate("food", { page: el.id })
-                }
+                onPress={() => navigation.navigate("food", { page: el.id })}
               >
                 <LinearGradient
                   colors={["#9ACF01", "#74A637"]}
@@ -139,12 +223,13 @@ const Nutrition = ({ navigation, route }) => {
                   </View>
                   <View>
                     <Text style={styles.foodBlockTitle}>{el.name}</Text>
-                    <Text style={styles.foodBlockRec}>
-                      Recommended: 300 cal
-                    </Text>
                   </View>
                   <View style={styles.foodBlockNow}>
-                    <Text style={styles.foodBlockNowText}>287 cal</Text>
+                    <Text style={styles.foodBlockNowText}>
+                      {taken.find((take) => take.eating_category_id === el.id)
+                        ?.food_item__calorie__sum || "0"}{" "}
+                      cal
+                    </Text>
                   </View>
                 </LinearGradient>
               </Pressable>
